@@ -1,0 +1,3 @@
+[submodule "project-management-tool"]
+	path = project-management-tool
+	url = https://github.com/pratikchi2019/PMT.git
