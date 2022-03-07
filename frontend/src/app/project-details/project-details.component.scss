@@ -1,0 +1,56 @@
+.leftContainer {
+    max-width: 100% !important;
+    display: inline-block;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.p-toolbar-group-left {
+    padding: 3px;
+}
+
+.detailItems {
+    padding: 10px;
+}
+.detailLeft,
+.detailRight {
+    display: inline-block;
+    width: 50%;
+    font-size: medium;
+}
+
+:host ::ng-deep .p-accordion-header-text {
+    font-weight: bold;
+    font-size: medium;
+}
+
+:host ::ng-deep .pi-bookmark-fill {
+    color: green;
+}
+
+:host ::ng-deep .breadcrumb {
+    padding: 10px 20px 10px 20px;
+    & .p-menuitem-text {
+        font-size: small;
+        margin-left: 5px;
+        cursor: pointer !important;
+    }
+}
+
+:host ::ng-deep .toolbar {
+    padding: 0 20px 5px 20px;
+}
+
+:host ::ng-deep .p-menuitem-link {
+    cursor: pointer !important;
+}
+
+:host ::ng-deep .detailItems {
+    > .statusBtn {
+        cursor: none !important;
+    }
+}
+
+.detailRow {
+    margin-bottom: 20px;
+}
