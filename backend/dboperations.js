@@ -156,34 +156,35 @@ async function updateData(record) {
         let product = await pool.request()
             .input('IDX', record.IDX)
             //  .input('EMR', record.EMR)
-            .input('Hospital', record.Hospital)
-            .input('Region', record.Region)
-            .input('State', record.State)
-            .input('Department', record.Department)
-            .input('Room', record.Room)
-            .input('Bed', record.Bed)
-            .input('DeviceID', record.DeviceID)
-            .input('DeviceName', record.DeviceName)
-            //.input('BioMedAssetID', record.BioMedAssetID)
-            //.input('Fixed', record.Fixed)
-            .input('MPIID', record.MPIID)
-            .input('AIP', record.AIP)
-            //  .input('AIPConDetails', record.AIPConDetails)
-            // .input('VCGGrouper', record.VCGGrouper)
-            // .input('Vendor', record.Vendor)
-            .input('Contacts', record.Contacts)
-            .input('ServerTypeName', record.ServerTypeName)
-            .input('ServerConDetails', record.ServerConDetails)
-            //  .input('ServerContent', record.ServerContent)
-            //  .input('SoftwareOSDetails', record.SoftwareOSDetails)
-            .input('DataflowDiagram', record.DataflowDiagram)
-            .input('TroubleshootingDocs', record.TroubleshootingDocs)
-            .input('Comments', record.Comments)
-            .query(`UPDATE MDIDetails SET Hospital = @Hospital, Region = @Region,
-            State = @State, Department = @Department, Room = @Room, Bed = @Bed, DeviceID = @DeviceID,
-            DeviceName = @DeviceName, MPIID = @MPIID, AIP = @AIP, Contacts = @Contacts, ServerConDetails = @ServerConDetails, DataflowDiagram = @DataflowDiagram,
-            TroubleshootingDocs = @TroubleshootingDocs, Comments = @Comments, ServerTypeName = @ServerTypeName  
-            WHERE IDX = @IDX; Select * from MDIDetails Order By Hospital ASC`)
+            .input('PRM', record.PRM)
+            .input('projectName', record.projectName)
+            .input('issueType', record.issueType)
+            .input('priority', record.priority)
+            .input('status', record.status)
+            .input('assignee', record.assignee)
+            .input('reporter', record.reporter)
+            .input('description', record.description)
+            .input('attachments', record.attachments)
+            .input('startDate', record.startDate)
+            .input('estimatedHours', record.estimatedHours)
+            .input('parentTaskLink', record.parentTaskLink)
+            .input('comments', record.comments)
+            .input('history', record.history)
+            .input('subTasks', record.subTasks)
+            .input('projectManager', record.projectManager)
+            .input('health', record.health)
+            .input('region', record.region)
+            .input('goLive', record.goLive)
+            .input('checklist', record.checklist)
+            .input('progress', record.progress)
+            .query(`UPDATE PROJECTLIST SET PRM = @PRM, projectName = @projectName,
+            issueType = @issueType, priority = @priority, status = @status, assignee = @assignee, reporter = @reporter,
+            description = @description, attachments = @attachments, startDate = @startDate, estimatedHours = @estimatedHours, 
+            parentTaskLink = @parentTaskLink, comments = @comments,
+            history = @history, subTasks = @subTasks, projectManager = @projectManager, health = @health,
+            region = @region, goLive = @goLive, checklist = @checklist, progress = @progress 
+            WHERE IDX = @IDX; Select * from PROJECTLIST Order By projectName`)
+            console.log(product)
         return product.recordsets;
     } catch (error) {
         console.log(error);

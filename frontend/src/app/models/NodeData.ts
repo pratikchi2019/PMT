@@ -8,7 +8,7 @@ export interface NodeData {
     reporter?: string,
     description?: string,
     attachments?: Array<File>,
-    startDate?: Date,
+    startDate?: string,
     estimatedHours?: string,
     parentTaskLink?: string,
     comments?: string,
@@ -18,5 +18,6 @@ export interface NodeData {
     health?: string,
     region?: string,
     goLive?: string,
-    checkList?: string
+    checkList?: string,
+    progress?: number
 }

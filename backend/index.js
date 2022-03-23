@@ -93,7 +93,7 @@ router.route('/department').post((request, response) => {
 })
 
 router.route('/update').put((request, response) => {
-    dboperations.updateData(request.body.record, request.body.selectedRegion, request.body.selectedHospital, request.body.selectedDept).then(result => {
+    dboperations.updateData(request.body.project).then(result => {
         return response.json(result[0]);
     })
 })

@@ -40,7 +40,7 @@
                 <th pSortableColumn="estimatedHours">Estimated Hours <p-sortIcon field="estimatedHours"></p-sortIcon></th>
                 <th pSortableColumn="startDate">Assigned Date <p-sortIcon field="startDate"></p-sortIcon></th>
                 <th pSortableColumn="goLive">Go Live <p-sortIcon field="goLive"></p-sortIcon></th>
-                <th>Action</th>
+                <th>Progress</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-object>
@@ -59,8 +59,7 @@
                 <td>{{object.startDate}}</td>
                 <td>{{object.goLive}}</td>
                 <td>
-                    <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button> -->
+                    {{object.progress ? object.progress : 0}} %
                 </td>
             </tr>
         </ng-template>

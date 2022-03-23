@@ -97,7 +97,7 @@ export class ProjectDetailsComponent implements OnInit {
 
 
   getSelectedProject() {
-    let proj = { "IDX": 206, "PRM": 4, "projectName": "Create APIs for adding users", "issueType": "subtask", "priority": "Lowest", "status": "In Progress", "assignee": "Kashi", "reporter": "Pratik", "description": "Description BSL-MC-ED-01-MNTR", "attachments": null, "startDate": "1998-01-23T12:45:56.000Z", "estimatedHours": "16", "parentTaskLink": "https://www.google.com", "comments": "Comments - Philips TS Support", "history": "History", "subTasks": "subtask links", "projectManager": "Proj Manager", "health": "Health - Risky", "region": "Region - TX", "goLive": "go live dt", "checklist": "checklist", "LastModifiedUser": null, "LastModifiedDateTime": null }
+    let proj = { "IDX": 206, "PRM": 4, "projectName": "Creatiuuuuuuuuuu APIs for adding users", "issueType": "subtask", "priority": "Lowest", "status": "In Progress", "assignee": "Kashi", "reporter": "Pratik", "description": "Description BSL-MC-ED-01-MNTR", "attachments": null, "startDate": "1998-01-23T12:45:56.000Z", "estimatedHours": "16", "parentTaskLink": "https://www.google.com", "comments": "Comments - Philips TS Support", "history": "History", "subTasks": "subtask links", "projectManager": "Proj Manager", "health": "Health - Risky", "region": "Region - TX", "goLive": "go live dt", "checklist": "checklist", "LastModifiedUser": null, "LastModifiedDateTime": null }
     this.dataservice.selectedProject.subscribe((project) => {
       this.project = project || proj
     })
@@ -110,16 +110,27 @@ export class ProjectDetailsComponent implements OnInit {
 
     console.log(proj)
   }
+  setStartDate(date: any) {
+    if (date) {
+      date.setTime(new Date(new Date(date.getTime() - (date.getTimezoneOffset() * 60 *
+        1000)).toUTCString()));
+    }
+    this.project.startDate = date
+  }
 
   editDetails() {
-    console.log(this.project)
     this.editBtnClicked = true;
     this.disableEdit = true;
   }
 
   saveDetails() {
-    this.disableEdit = false;
-    this.applyStyles();
+    this.project.attachments = null;
+    this.dataservice.updateProject(this.project).subscribe((res) => {
+      console.log(res)
+      this.disableEdit = false;
+      this.applyStyles();
+    })
+
   }
 
   applyStyles() {

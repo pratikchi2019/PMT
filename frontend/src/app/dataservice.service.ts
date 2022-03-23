@@ -109,8 +109,8 @@ export class DataserviceService {
 
     );
   }
-  updateRecord(record: any) {
-    return this.http.put<any>(this.baseURL+"/update", { record })
+  updateProject(project: any) {
+    return this.http.put<any>(this.baseURL+"/update", { project })
   }
 
   deleteRecord(record: any) {

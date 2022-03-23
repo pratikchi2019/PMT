@@ -35,11 +35,13 @@
                             <div class="detailItems">
                                 <div class="detailRow">
                                     <div class="detailLeft">Type : </div>
-                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-bookmark" style="margin-right: 5px;"></i>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-bookmark"
+                                            style="margin-right: 5px;"></i>
                                         {{project.issueType}}</div>
-                                        <div *ngIf="disableEdit" class="detailRight">
-                                            <p-dropdown [options]="projectTypes" [(ngModel)]="project.issueType" placeholder="Select a Type" [showClear]="true"></p-dropdown>
-                                        </div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <p-dropdown [options]="projectTypes" [(ngModel)]="project.issueType"
+                                            placeholder="Select a Type" [showClear]="true"></p-dropdown>
+                                    </div>
 
                                 </div>
                                 <div class="detailRow">
@@ -49,7 +51,8 @@
                                             [styleClass]="statusBtnStyleClass"></p-button>
                                     </div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown [options]="statusTypes" [(ngModel)]="project.status" placeholder="Select a Status" [showClear]="true"></p-dropdown>
+                                        <p-dropdown [options]="statusTypes" [(ngModel)]="project.status"
+                                            placeholder="Select a Status" [showClear]="true"></p-dropdown>
                                     </div>
                                 </div>
                                 <div class="detailRow">
@@ -140,7 +143,83 @@
         </ng-template>
         <ng-template pTemplate>
             <div class="col flex align-items-center justify-content-center">
-                Panel 2
+                <div class="leftContainer">
+                    <p-toolbar>
+                        <!-- <div class="p-toolbar-group-left">
+                            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()"
+                                [disabled]="disableEdit"></p-button> &nbsp;
+                            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success"
+                                (click)="saveDetails()" [disabled]="!disableEdit"></p-button>
+                        </div> -->
+                    </p-toolbar>
+                    <p-accordion [multiple]="true">
+                        <p-accordionTab header="People" [selected]="true">
+                            <div class="detailItems">
+                                <div class="detailRow">
+                                    <div class="detailLeft">Assignee : </div>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-user"
+                                            style="margin-right: 5px;"></i>
+                                        {{project.assignee}}</div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <p-dropdown [options]="projectTypes" [(ngModel)]="project.assignee"
+                                            placeholder="Select a Type" [showClear]="true"></p-dropdown>
+                                    </div>
+
+                                </div>
+                                <div class="detailRow">
+                                    <div class="detailLeft">Reporter : </div>
+                                    <div class="detailRight"><i class="pi pi-user"
+                                            style="margin-right: 10px;"></i>{{project.reporter}}
+                                    </div>
+                                </div>
+                            </div>
+                        </p-accordionTab>
+                        <p-accordionTab header="Dates" [selected]="true">
+                            <div class="detailItems">
+                                <div class="detailRow">
+                                    <div class="detailLeft">Start Date : </div>
+                                    <div class="detailRight">
+                                            <input type="date" [(ngModel)]="project.startDate">
+                                    </div>
+                                </div>
+                                <div class="detailRow">
+                                    <div class="detailLeft">Go Live : </div>
+                                    <div class="detailRight">
+                                        <input type="date" [(ngModel)]="project.goLive">
+                                    </div>
+                                </div>
+                            </div>
+                        </p-accordionTab>
+                        <p-accordionTab header="Time Tracking" [selected]="true">
+                            <div class="detailItems">
+                                <div class="detailRow">
+                                    <div class="detailLeft">Estimated Hours : </div>
+                                    <div class="detailRight">
+                                        <p-inputNumber  [max]="10" [(ngModel)]="project.estimatedHours" [showButtons]="true"
+                                            buttonLayout="horizontal" spinnerMode="horizontal" inputId="vertical"
+                                            decrementButtonClass="p-button-secondary"
+                                            incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus"
+                                            decrementButtonIcon="pi pi-minus">
+                                        </p-inputNumber>
+                                    </div>
+                                </div>
+                                <div class="detailRow">
+                                    <div class="detailLeft">Progress : </div>
+                                    <div class="detailRight">
+                                    <div *ngIf="!disableEdit" class="detailRight">
+                                        <p-progressBar [value]="project.progress"></p-progressBar>
+                                    </div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <input type="text" pInputText [(ngModel)]="project.progress" readonly/>
+                                        <p-slider [(ngModel)]="project.progress"></p-slider>
+
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
             </div>
         </ng-template>
     </p-splitter>
