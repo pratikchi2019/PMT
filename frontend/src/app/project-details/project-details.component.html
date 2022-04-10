@@ -4,16 +4,10 @@
 <div class="toolbar">
     <p-toolbar>
         <div class="p-toolbar-group-left">
-            <p-button label="New" icon="pi pi-plus" class="mr-6"></p-button>
-            <!-- <p-button label="Upload" icon="pi pi-upload" styleClass="p-button-success"></p-button> -->
-
-            <!-- <i class="p-toolbar-separator pi pi-bars mr-2" style="vertical-align: middle"></i> -->
-        </div>
-
-        <div class="p-toolbar-group-right">
-            <p-button icon="pi pi-search" class="mr-2"></p-button>
-            <!-- <p-button icon="pi pi-calendar" styleClass="p-button-success mr-2"></p-button> -->
-            <p-button icon="pi pi-times" styleClass="p-button-danger"></p-button>
+            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()"
+                [disabled]="disableEdit"></p-button> &nbsp;
+            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success"
+                (click)="saveDetails()" [disabled]="!disableEdit"></p-button>
         </div>
     </p-toolbar>
 </div>
@@ -22,14 +16,6 @@
         <ng-template pTemplate>
             <div class="col flex align-items-center justify-content-center">
                 <div class="leftContainer">
-                    <p-toolbar>
-                        <div class="p-toolbar-group-left">
-                            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()"
-                                [disabled]="disableEdit"></p-button> &nbsp;
-                            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success"
-                                (click)="saveDetails()" [disabled]="!disableEdit"></p-button>
-                        </div>
-                    </p-toolbar>
                     <p-accordion [multiple]="true">
                         <p-accordionTab header="Details" [selected]="true">
                             <div class="detailItems">
@@ -145,12 +131,6 @@
             <div class="col flex align-items-center justify-content-center">
                 <div class="leftContainer">
                     <p-toolbar>
-                        <!-- <div class="p-toolbar-group-left">
-                            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()"
-                                [disabled]="disableEdit"></p-button> &nbsp;
-                            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success"
-                                (click)="saveDetails()" [disabled]="!disableEdit"></p-button>
-                        </div> -->
                     </p-toolbar>
                     <p-accordion [multiple]="true">
                         <p-accordionTab header="People" [selected]="true">
@@ -179,13 +159,15 @@
                                 <div class="detailRow">
                                     <div class="detailLeft">Start Date : </div>
                                     <div class="detailRight">
-                                            <input type="date" [(ngModel)]="project.startDate">
+                                            <input *ngIf="!disableEdit" type="date" [(ngModel)]="project.startDate" disabled>
+                                            <input *ngIf="disableEdit" type="date" [(ngModel)]="project.startDate">
                                     </div>
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Go Live : </div>
                                     <div class="detailRight">
-                                        <input type="date" [(ngModel)]="project.goLive">
+                                        <input *ngIf="!disableEdit" type="date" [(ngModel)]="project.goLive" disabled>
+                                        <input *ngIf="disableEdit" type="date" [(ngModel)]="project.goLive">
                                     </div>
                                 </div>
                             </div>
