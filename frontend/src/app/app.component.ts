@@ -22,7 +22,7 @@ export class AppComponent {
   @HostListener('window:beforeunload', [ '$event' ])
   beforeUnloadHandler(event: any) {
     // ...
-    this.logout()
+     this.logout()
     console.log(event)
   }
   ngOnChanges(changes: SimpleChanges) {

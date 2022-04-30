@@ -16,10 +16,6 @@ conn.connect().then(() => {
     console.log("connected")
 });
 
-
-
-
-
 function get(keys, value) {
     var key = CryptoJS.enc.Utf8.parse(keys);
     var iv = CryptoJS.enc.Utf8.parse(keys);
@@ -37,7 +33,7 @@ async function getAllData() {
     try {
         let pool = await conn.connect(config);
         let products = await pool.request()
-            .query(`SELECT * from PROJECTLIST`);
+            .query(`SELECT * from PROJECTLIST Order By projectName`);
         return products.recordsets;
     } catch (error) {
         console.log(error);
@@ -129,6 +125,40 @@ async function getDepartmentData(selectedRegion, state, hospitalName, department
             .input('input_parameter2', sql.NVarChar, state)
             .input('input_parameter3', sql.NVarChar, selectedRegion)
             .query(`SELECT * from MDIDetails where Region = @input_parameter3 AND State = @input_parameter2 AND Hospital = @input_parameter AND Department= @input_parameter1 Order By Hospital ASC`);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getComments(IDX) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('input_parameter', sql.Int, IDX)
+            .query(`SELECT * from Comments where IDX = @input_parameter Order By CommentDateTime DESC`);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function saveComments(comment) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('IDX', sql.Int, comment.IDX)
+            .input('PRM', sql.Int, comment.PRM)
+            .input('CommentDateTime', sql.NVarChar, comment.CommentDateTime)
+            .input('UserID', sql.NVarChar, comment.UserID)
+            .input('Comment', sql.NVarChar, comment.Comment)
+            .input('FirstName', sql.NVarChar, comment.FirstName)
+            .input('LastName', sql.NVarChar, comment.LastName)
+            .query(`INSERT INTO Comments (IDX, PRM, CommentDateTime, UserID, Comment,  FirstName,
+                LastName) VALUES (@IDX, @PRM, @CommentDateTime, @UserID, @Comment, @FirstName, 
+                    @LastName) Select * from Comments Order By CommentDateTime DESC `);
         return product.recordsets;
 
     } catch (error) {
@@ -231,43 +261,38 @@ async function createRecord(record) {
     try {
         let pool = await conn.connect(config);
         let insertProduct = await pool.request()
-            .input('IDX', record.IDX)
-            //  .input('EMR', record.EMR)
-            .input('Hospital', record.Hospital)
-            .input('Region', record.Region)
-            .input('State', record.State)
-            .input('Department', record.Department)
-            .input('Room', record.Room)
-            .input('Bed', record.Bed)
-            .input('DeviceID', record.DeviceID)
-            .input('DeviceName', record.DeviceName)
-            //  .input('BioMedAssetID', record.BioMedAssetID)
-            // .input('Fixed', record.Fixed)
-            //  .input('LWS', record.LWS)
-            .input('MPIID', record.MPIID)
-            .input('AIP', record.AIP)
-            // .input('AIPConDetails', record.AIPConDetails)
-            //  .input('VCGGrouper', record.VCGGrouper)
-            //  .input('Vendor', record.Vendor)
-            .input('Contacts', record.Contacts)
-            .input('ServerTypeName', record.ServerTypeName)
-            .input('ServerConDetails', record.ServerConDetails)
-            // .input('ServerContent', record.ServerContent)
-            // .input('SoftwareOSDetails', record.SoftwareOSDetails)
-            .input('DataflowDiagram', record.DataflowDiagram)
-            .input('TroubleshootingDocs', record.TroubleshootingDocs)
-            .input('Comments', record.Comments)
-            .query(`INSERT INTO MDIDetails (Region, State, Hospital, Department, Room,  Bed,
-                DeviceID, DeviceName, MPIID, AIP, Contacts,
-                ServerConDetails, DataflowDiagram, TroubleshootingDocs, 
-                Comments, ServerTypeName) VALUES (@Region, @State, @Hospital, @Department, @Room, @Bed, 
-                    @DeviceID, @DeviceName, @MPIID, @AIP, @Contacts, @ServerConDetails, @DataflowDiagram, @TroubleshootingDocs,
-                    @Comments, @ServerTypeName)`);
+        .input('PRM', record.PRM)
+        .input('projectName', record.projectName)
+        .input('issueType', record.issueType)
+        .input('priority', record.priority)
+        .input('status', record.status)
+        .input('assignee', record.assignee)
+        .input('reporter', record.reporter)
+        .input('description', record.description)
+        .input('attachments', record.attachments)
+        .input('startDate', record.startDate)
+        .input('estimatedHours', record.estimatedHours)
+        .input('parentTaskLink', record.parentTaskLink)
+        .input('comments', record.comments)
+        .input('history', record.history)
+        .input('subTasks', record.subTasks)
+        .input('projectManager', record.projectManager)
+        .input('health', record.health)
+        .input('region', record.region)
+        .input('goLive', record.goLive)
+        .input('checklist', record.checklist)
+        .input('progress', record.progress)
+            .query(`INSERT INTO PROJECTLIST (PRM, projectName, issueType, priority, status,  assignee,
+                reporter, description, startDate, estimatedHours, parentTaskLink,
+                projectManager, health, region, 
+                goLive) VALUES (@PRM, @projectName, @issueType, @priority, @status, @assignee, 
+                    @reporter, @description, @startDate, @estimatedHours, @parentTaskLink, @projectManager, @health, @region,
+                    @goLive) Select * from PROJECTLIST Order By projectName`);
         return insertProduct.recordsets;
 
     } catch (err) {
         console.log("err-----------------------------------------------------------------------------------------------");
-        err.originalError.info.message = "Data Insertion Failed. Missing input values."
+        // err.originalError.info.message = "Data Insertion Failed. Missing input values."
         return err;
     }
 }
@@ -411,5 +436,7 @@ module.exports = {
     updateUser: updateUser,
     getAllRegions: getAllRegions,
     getStateData: getStateData,
-    getProjectDetails: getProjectDetails
+    getProjectDetails: getProjectDetails,
+    getComments: getComments,
+    saveComments: saveComments
 }

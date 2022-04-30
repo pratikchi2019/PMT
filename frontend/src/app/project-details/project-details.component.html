@@ -1,13 +1,22 @@
-<div class="breadcrumb">
-    <p-breadcrumb [model]="itemsBreadCrumb" [home]="home"></p-breadcrumb>
+<div class="header-img">
+</div>
+<div class="header-main">
+    <p-image src="assets/CHI_Logo.png" alt="Image" width="50" height="50"></p-image>
+    <h1 *ngIf="!disableEdit" class="header-title">{{project.projectName}}</h1>
+    <div *ngIf="disableEdit" style="padding-left: 10px; display: inline-block; width: 95%;">
+        <input style="width: 100%; font-size: larger; padding: 10px;" type="text" [(ngModel)]="project.projectName"
+            pInputText placeholder="Project Name">
+    </div>
+    <!-- <p-button label="{{project.projectName}}" icon="pi pi-users" styleClass="p-button-primary titleBtn">
+    </p-button> -->
 </div>
 <div class="toolbar">
     <p-toolbar>
         <div class="p-toolbar-group-left">
-            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()"
-                [disabled]="disableEdit"></p-button> &nbsp;
-            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success"
-                (click)="saveDetails()" [disabled]="!disableEdit"></p-button>
+            <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()" [disabled]="disableEdit">
+            </p-button> &nbsp;
+            <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success" (click)="saveDetails()"
+                [disabled]="!disableEdit"></p-button>
         </div>
     </p-toolbar>
 </div>
@@ -43,39 +52,56 @@
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Priority : </div>
-                                    <div class="detailRight"><i [class]="priorityIconClass"
+                                    <div *ngIf="!disableEdit" class="detailRight"><i [class]="priorityIconClass"
                                             style="margin-right: 5px;"></i>
                                         {{project.priority}}</div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <p-dropdown [options]="priorityTypes" [(ngModel)]="project.priority"
+                                            placeholder="Select a priority" [showClear]="true"></p-dropdown>
+                                    </div>
 
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Parent Task : </div>
-                                    <div class="detailRight"><i class="pi pi-external-link"
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-external-link"
                                             style="margin-right: 10px;"></i>
-                                        <a href="{{project.parentTaskLink}}">{{project.parentTaskLink}}</a>
+                                        <a href="{{project.parentTaskLink}}"
+                                            target="_blank">{{project.parentTaskLink}}</a>
+                                    </div>
+
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <input style="width: 50%" type="text" [(ngModel)]="project.parentTaskLink"
+                                            pInputText placeholder="URL should start with http://">
                                     </div>
 
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Health : </div>
-                                    <div class="detailRight"><i class="fa fa-bolt" style="margin-right: 10px;"></i>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-bolt"
+                                            style="margin-right: 10px;"></i>
                                         {{project.health}}</div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <input style="width: 50%" type="text" [(ngModel)]="project.health" pInputText
+                                            placeholder="Task health">
+                                    </div>
 
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Region : </div>
-                                    <div class="detailRight"><i class="fa fa-globe" style="margin-right: 5px;"></i>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-globe"
+                                            style="margin-right: 5px;"></i>
                                         {{project.region}}</div>
-
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <input style="width: 50%" type="text" [(ngModel)]="project.region" pInputText
+                                            placeholder="Enter a region">
+                                    </div>
                                 </div>
-
-
                             </div>
                         </p-accordionTab>
                         <p-accordionTab header="Description">
-
-                            <p-editor [(ngModel)]="project.description" [style]="{'height':'320px'}"></p-editor>
-                            <p>Value: {{project.description||'empty'}}</p>
+                            <p-editor (onTextChange)="handleChangeDescription($event.textValue)"
+                                [readonly]="!disableEdit" [(ngModel)]="project.description"
+                                [style]="{'height':'320px'}"></p-editor>
                         </p-accordionTab>
                         <p-accordionTab header="Attachments">
                             <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
@@ -101,24 +127,46 @@
                             <div class="card">
                                 <p-tabView>
                                     <p-tabPanel header="Comments">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                            quis nostrud exercitation
-                                            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                                            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                                            pariatur.
-                                            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                                            deserunt mollit anim id est laborum.</p>
+                                        <p-accordion *ngFor="let comment of comments">
+                                            <p-accordionTab [selected]="true"
+                                                header="{{comment.firstName}} {{comment.lastName}}          {{comment.CommentDateTime}} ">
+                                                <p>{{comment.Comment}}</p>
+                                            </p-accordionTab>
+                                        </p-accordion>
+                                        <span *ngIf="enableCommentBox" class="p-float-label">
+                                            <textarea maxlength="1000" autoResize="autoResize" [(ngModel)]="comment"
+                                                style="margin-top: 5px; max-width: 100%; width: 100%;" id="float-input"
+                                                rows="5" cols="30" pInputTextarea></textarea>
+                                            <label for="float-input">Comment</label>
+                                        </span>
+                                        <button (click)="addComment()" pButton pRipple type="button" label="Comment"
+                                            class="p-button-raised p-button-secondary p-button-text"></button>
+                                        <button *ngIf="enableCommentBox" (click)="saveComment()" pButton pRipple
+                                            type="button" label="Save" class="p-button-raised p-button-success"
+                                            [style]="{'float':'right', 'margin-right': '10px'}"></button>
+                                        <button *ngIf="enableCommentBox" (click)="addComment()" pButton pRipple
+                                            type="button" label="Cancel" class="p-button-raised p-button-danger"
+                                            [style]="{'float':'right', 'margin-right': '10px'}"></button>
                                     </p-tabPanel>
                                     <p-tabPanel header="History">
-                                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                            doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-                                            veritatis et quasi
-                                            architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem
-                                            quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-                                            dolores eos qui ratione
-                                            voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam
-                                            eius modi.</p>
+                                        <p-table [value]="historyArr" responsiveLayout="scroll">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Field</th>
+                                                    <th>Old Value</th>
+                                                    <th>New Value</th>
+                                                    <th>Username</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-record>
+                                                <tr>
+                                                    <td>{{record.fieldName}}</td>
+                                                    <td>{{record.oldValue}}</td>
+                                                    <td>{{record.newValue}}</td>
+                                                    <td>{{record.FirstName + ' ' + record.LastName}}</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
                                     </p-tabPanel>
                                 </p-tabView>
                             </div>
@@ -141,15 +189,19 @@
                                             style="margin-right: 5px;"></i>
                                         {{project.assignee}}</div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown [options]="projectTypes" [(ngModel)]="project.assignee"
-                                            placeholder="Select a Type" [showClear]="true"></p-dropdown>
+                                        <p-dropdown [options]="allUsers" [(ngModel)]="project.assignee"
+                                            placeholder="Select an Assignee" [showClear]="true"></p-dropdown>
                                     </div>
 
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Reporter : </div>
-                                    <div class="detailRight"><i class="pi pi-user"
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-user"
                                             style="margin-right: 10px;"></i>{{project.reporter}}
+                                    </div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <p-dropdown [options]="allUsers" [(ngModel)]="project.reporter"
+                                            placeholder="Select a Reporter" [showClear]="true"></p-dropdown>
                                     </div>
                                 </div>
                             </div>
@@ -159,8 +211,9 @@
                                 <div class="detailRow">
                                     <div class="detailLeft">Start Date : </div>
                                     <div class="detailRight">
-                                            <input *ngIf="!disableEdit" type="date" [(ngModel)]="project.startDate" disabled>
-                                            <input *ngIf="disableEdit" type="date" [(ngModel)]="project.startDate">
+                                        <input *ngIf="!disableEdit" type="date" [(ngModel)]="project.startDate"
+                                            disabled>
+                                        <input *ngIf="disableEdit" type="date" [(ngModel)]="project.startDate">
                                     </div>
                                 </div>
                                 <div class="detailRow">
@@ -177,7 +230,8 @@
                                 <div class="detailRow">
                                     <div class="detailLeft">Estimated Hours : </div>
                                     <div class="detailRight">
-                                        <p-inputNumber  [max]="10" [(ngModel)]="project.estimatedHours" [showButtons]="true"
+                                        <p-inputNumber [disabled]="!disableEdit" [allowEmpty]="false"
+                                            [(ngModel)]="project.estimatedHours" [showButtons]="true"
                                             buttonLayout="horizontal" spinnerMode="horizontal" inputId="vertical"
                                             decrementButtonClass="p-button-secondary"
                                             incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus"
@@ -188,17 +242,19 @@
                                 <div class="detailRow">
                                     <div class="detailLeft">Progress : </div>
                                     <div class="detailRight">
-                                    <div *ngIf="!disableEdit" class="detailRight">
-                                        <p-progressBar [value]="project.progress"></p-progressBar>
-                                    </div>
-                                    <div *ngIf="disableEdit" class="detailRight">
-                                        <input type="text" pInputText [(ngModel)]="project.progress" readonly/>
-                                        <p-slider [(ngModel)]="project.progress"></p-slider>
+                                        <div *ngIf="!disableEdit" class="detailRight">
+                                            <p-progressBar [value]="project.progress"></p-progressBar>
+                                        </div>
+                                        <div *ngIf="disableEdit" class="detailRight">
+                                            <input type="text" pInputText [(ngModel)]="project.progress" readonly />
+                                            <p-slider (onChange)="handleChangeProgress($event)"
+                                                [(ngModel)]="project.progress"></p-slider>
 
-                                    </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- .p-progressbar .p-progressbar-value -->
                         </p-accordionTab>
                     </p-accordion>
                 </div>

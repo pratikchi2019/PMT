@@ -1,4 +1,5 @@
 export interface NodeData {
+    IDX?: number;
     PRM?: number,
     projectName?: string,
     issueType?: string,

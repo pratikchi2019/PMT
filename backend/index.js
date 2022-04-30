@@ -122,7 +122,7 @@ router.route('/create').post((request, response) => {
     let record = {...request.body }
     dboperations.createRecord(record).then(result => {
         console.log(result)
-        response.status(201).json(result);
+        response.status(201).json(result[0]);
     })
 })
 
@@ -130,6 +130,19 @@ router.route('/delete').delete((request, response) => {
     let record = {...request.body }
     dboperations.deleteRecord(record).then(result => {
         response.status(201).json(result);
+    })
+})
+
+router.route('/comments').post((request, response) => {
+    dboperations.getComments(request.body.idx).then(result => {
+        return response.json(result[0]);
+    })
+})
+
+router.route('/saveComment').post((request, response) => {
+    console.log(request.body)
+    dboperations.saveComments(request.body.comment).then(result => {
+        return response.json(result[0]);
     })
 })
 
@@ -165,4 +178,4 @@ router.route('/projectDetails').post((request, response) => {
 
 var port = process.env.PORT || 8085;
 app.listen(port);
-console.log('Inventory API is runnning at ' + port);
+console.log('PMT API is runnning at ' + port);

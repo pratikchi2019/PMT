@@ -52,6 +52,9 @@ export class LoginComponent implements OnInit {
       this.dataservice.setRole(this.userRole);
       this.dataservice.authenticated$.next(true);
       this.dataservice.userID.next(data.UserID);
+      this.dataservice.FirstName.next(data.FirstName);
+      this.dataservice.LastName.next(data.LastName);
+      this.dataservice.UserObj.next(data);
       this.dataservice.loginDateTime.next(date);
       this.dataservice.loginInfo(data.UserID, date.toLocaleString("en", {
         weekday: "short",
@@ -69,7 +72,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['dashboard'])
     }, (err) => {
       console.error(err)
-      this.router.navigate(['dashboard'])
+      // this.router.navigate(['dashboard'])
       this.loginFailed = true
     })
   }

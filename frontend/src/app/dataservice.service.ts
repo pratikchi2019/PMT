@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { retry, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { Comments } from './models/comments';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,8 +15,12 @@ export class DataserviceService {
   loginDateTime: BehaviorSubject<any> = new BehaviorSubject("");
   logoutDateTime: BehaviorSubject<any> = new BehaviorSubject("");
   userID: BehaviorSubject<any> = new BehaviorSubject("");
+  FirstName: BehaviorSubject<any> = new BehaviorSubject("");
+  LastName: BehaviorSubject<any> = new BehaviorSubject("");
   IDX: BehaviorSubject<any> = new BehaviorSubject(null);
   selectedProject: BehaviorSubject<any> = new BehaviorSubject(null);
+  UserObj: BehaviorSubject<any> = new BehaviorSubject(null);
+  allUsers: BehaviorSubject<any> = new BehaviorSubject(null);
   constructor(private http: HttpClient) { }
   baseURL = "http://localhost:8085/api"
   //baseURL = "http://rdcquonapp001.chi.catholichealth.net:8085/api"
@@ -31,7 +36,7 @@ export class DataserviceService {
   }
 
   getSelectedProject() {
-    this.selectedProject.subscribe((project)=>{
+    this.selectedProject.subscribe((project) => {
       return project;
     })
   }
@@ -41,7 +46,7 @@ export class DataserviceService {
   }
 
   loginInfo(userID: any, LoginDateTime: string, LogoutDateTime: string) {
-    return this.http.post<any>(this.baseURL+"/loginInfo", { userID, LoginDateTime, LogoutDateTime })
+    return this.http.post<any>(this.baseURL + "/loginInfo", { userID, LoginDateTime, LogoutDateTime })
   }
 
   logout(idx: any, uid: any, loginDtTime: { toLocaleString: (arg0: string, arg1: { weekday: string; year: string; month: string; day: string; hour: string; minute: string; second: string; timeZoneName: string; }) => any; }, logoutDtTime: Date) {
@@ -65,43 +70,43 @@ export class DataserviceService {
       second: "numeric",
       timeZoneName: "long"
     })
-    return this.http.post<any>(this.baseURL+"/logout", { idx, uid, loginDtTm, logoutDtTm })
+    return this.http.post<any>(this.baseURL + "/logout", { idx, uid, loginDtTm, logoutDtTm })
   }
 
   getAllData() {
-    return this.http.get<any>(this.baseURL+"/data")
+    return this.http.get<any>(this.baseURL + "/data")
   }
 
   getProjectDetails(projectId) {
-    return this.http.post<any>(this.baseURL+ '/projectDetails', { projectId })
+    return this.http.post<any>(this.baseURL + '/projectDetails', { projectId })
   }
 
   getAllRegions() {
-    return this.http.get<any>(this.baseURL+"/regions")
+    return this.http.get<any>(this.baseURL + "/regions")
   }
 
   getData(Region: any) {
-    return this.http.post<any>(this.baseURL+"/region", { Region })
+    return this.http.post<any>(this.baseURL + "/region", { Region })
   }
   getDataByEMR(emr: any) {
-    return this.http.post<any>(this.baseURL+"/emr", emr)
+    return this.http.post<any>(this.baseURL + "/emr", emr)
   }
 
   getDataState(selectedRegion: any, state: any) {
-    return this.http.post<any>(this.baseURL+"/state", { selectedRegion, state })
+    return this.http.post<any>(this.baseURL + "/state", { selectedRegion, state })
   }
 
   getDataHospital(selectedRegion: any, state: any, hospitalName: any) {
-    return this.http.post<any>(this.baseURL+"/hospital", { selectedRegion, state, hospitalName })
+    return this.http.post<any>(this.baseURL + "/hospital", { selectedRegion, state, hospitalName })
   }
 
 
   getDataDept(selectedRegion: any, state: any, hospital: any, department: any) {
-    return this.http.post<any>(this.baseURL+"/department", {selectedRegion, state, hospital, department })
+    return this.http.post<any>(this.baseURL + "/department", { selectedRegion, state, hospital, department })
   }
 
   createRecord(record: any) {
-    return this.http.post<any>(this.baseURL+"/create", record).pipe(
+    return this.http.post<any>(this.baseURL + "/create", record).pipe(
 
       retry(1),
 
@@ -110,17 +115,26 @@ export class DataserviceService {
     );
   }
   updateProject(project: any) {
-    return this.http.put<any>(this.baseURL+"/update", { project })
+    return this.http.put<any>(this.baseURL + "/update", { project })
   }
 
   deleteRecord(record: any) {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }), body: record
     };
-    return this.http.delete<any>(this.baseURL+"/delete", httpOptions)
+    return this.http.delete<any>(this.baseURL + "/delete", httpOptions)
   }
+
+  getComments(idx: any) {
+    return this.http.post<any>(this.baseURL + "/comments", { idx })
+  }
+
+  saveComments(comment: Comments) {
+    return this.http.post<any>(this.baseURL + "/saveComment", { comment })
+  }
+
   isLoggedIn(userId?: string, password?: any) {
-    return this.http.post<any>(this.baseURL+"/login", { userId, password })
+    return this.http.post<any>(this.baseURL + "/login", { userId, password })
     // return true;
   }
 
@@ -149,11 +163,11 @@ export class DataserviceService {
   }
 
   getAllUsers() {
-    return this.http.get<any>(this.baseURL+"/users")
+    return this.http.get<any>(this.baseURL + "/users")
   }
 
   addUser(user: any) {
-    return this.http.post<any>(this.baseURL+"/createUser", user).pipe(
+    return this.http.post<any>(this.baseURL + "/createUser", user).pipe(
 
       retry(1),
 
@@ -162,7 +176,7 @@ export class DataserviceService {
     );
   }
   deleteUser(user: any) {
-    return this.http.post<any>(this.baseURL+"/deleteUser", user).pipe(
+    return this.http.post<any>(this.baseURL + "/deleteUser", user).pipe(
 
       retry(1),
 
@@ -172,7 +186,7 @@ export class DataserviceService {
   }
 
   updateUser(user: any) {
-    return this.http.post<any>(this.baseURL+"/updateUser", user).pipe(
+    return this.http.post<any>(this.baseURL + "/updateUser", user).pipe(
 
       retry(1),
 

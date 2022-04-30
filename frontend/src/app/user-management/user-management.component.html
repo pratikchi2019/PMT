@@ -1,0 +1,113 @@
+<p-toast></p-toast>
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" pTooltip="Add New Record" tooltipPosition="bottom" icon="pi pi-plus"
+                class="p-button-success p-mr-2" (click)="openNew()"></button>
+            &nbsp; <button pTooltip="Delete Selected Records" tooltipPosition="bottom" pButton pRipple [label]="Delete"
+                icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedRecords()"
+                [disabled]="!selectedRecords || !selectedRecords.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <button type="button" pButton pRipple icon="pi pi-file-o" (click)="dt.exportCSV()" class="p-mr-2"
+                pTooltip="Export Table Data" tooltipPosition="bottom"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table [columns]="cols" id="my-table" #dt [value]="tabledata" [rowsPerPageOptions]="[5,10,25]" [paginator]="true"
+        [rows]="5" [showCurrentPageReport]="true"
+        [globalFilterFields]="['FirstName', 'LastName', 'Role', 'UserID']"
+        [(selection)]="selectedRecords" [rowHover]="true" dataKey="IDX"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                <h5 class="p-m-0">Manage Records</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pTooltip="Search anything in table" tooltipPosition="right" pInputText type="text"
+                        (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="FirstName">Firstname<p-sortIcon field="FirstName">
+                    </p-sortIcon>
+                </th>
+                <th pSortableColumn="LastName">Lastname <p-sortIcon field="LastName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="Role">Role <p-sortIcon field="Role"></p-sortIcon>
+                </th>
+                <th pSortableColumn="UserID">User ID<p-sortIcon field="UserID"></p-sortIcon>
+                </th>
+                <th pSortableColumn="Password">Password</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-record>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="record"></p-tableCheckbox>
+                </td>
+                <td>{{record.FirstName}}</td>
+                <td>{{record.LastName}}</td>
+                <td>{{record.Role}}</td>
+                <td>{{record.UserID}}</td>
+                <td>************</td>
+                <td>
+                    <button pTooltip="Edit this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-pencil"
+                        class="p-button-rounded p-button-success p-mr-2" (click)="editRecord(record)"></button> &nbsp;
+                    <button pTooltip="Delete this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-trash"
+                        class="p-button-rounded p-button-danger" (click)="deleteRecord(record)"></button>
+
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="User Details" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="FirstName">Firstname</label> &nbsp;
+            <input style="margin-top: 5px;" type="text" pInputText id="FirstName" [(ngModel)]="record.FirstName" required
+                autofocus />
+            <small class="p-error" *ngIf="submitted && !record.FirstName">FirstName is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="LastName">Lastname</label> &nbsp;
+            <input style="margin-top: 5px;" type="text" pInputText id="LastName" [(ngModel)]="record.LastName" required
+                autofocus />
+            <small class="p-error" *ngIf="submitted && !record.LastName">LastName is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="Role">Role</label> &nbsp;
+            <input style="margin-top: 5px;" type="text" pInputText id="Role" [(ngModel)]="record.Role" required
+                autofocus />
+            <small class="p-error" *ngIf="submitted && !record.Role">Role is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="UserID">User ID</label> &nbsp;
+            <input style="margin-top: 5px;" type="text" pInputText id="UserID" [(ngModel)]="record.UserID" required
+                autofocus />
+            <small class="p-error" *ngIf="submitted && !record.UserID">UserID is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="Password">Password</label> &nbsp;
+                <p-password [(ngModel)]="record.Password" [toggleMask]="true"></p-password>
+            <small class="p-error" *ngIf="submitted && !record.Password">Password is required.</small>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        &nbsp; <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="saveUser()"></button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

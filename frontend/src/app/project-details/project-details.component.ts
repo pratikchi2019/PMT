@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DataserviceService } from '../dataservice.service';
+import { Comments } from '../models/comments';
+import { HistoryObject } from '../models/history';
 import { NodeData } from '../models/NodeData';
+import { USERMANAGEMENT } from '../models/usermanagement';
 
 @Component({
   selector: 'app-project-details',
@@ -9,16 +12,18 @@ import { NodeData } from '../models/NodeData';
   styleUrls: ['./project-details.component.scss']
 })
 export class ProjectDetailsComponent implements OnInit {
+  oldObj: any;
+  historyArr: any = [];
+  updatedDescription: any;
 
   constructor(private dataservice: DataserviceService) { }
   items: any[];
-  itemsBreadCrumb: MenuItem[];
-  home: MenuItem;
   dashboard: MenuItem;
   project: NodeData;
   projectTypes: any[];
   selectedProjectType: any;
   statusTypes: any[];
+  priorityTypes: any[];
   editBtnClicked: boolean = false;
   disableEdit: boolean = false;
   statusBtnStyleClass: string = '';
@@ -26,9 +31,17 @@ export class ProjectDetailsComponent implements OnInit {
   text1: string = '';
   qlLink: any;
   qlImage: any;
+  enableCommentBox: boolean = false;
+  comments: Comments[];
+  comment: string = "";
+  progressBarColoredElem: any;
+  progressEvent: any;
+  allUsers: any;
+  userObject = {} as USERMANAGEMENT;
 
   ngOnInit(): void {
     this.getSelectedProject();
+    this.getUserObj();
     this.disableEdit = false;
     this.items = [
       {
@@ -70,11 +83,6 @@ export class ProjectDetailsComponent implements OnInit {
         field: this.project.region,
       }
     ];
-    this.itemsBreadCrumb = [
-      { label: 'Dashboard', routerLink: '/dashboard', icon: 'pi pi-home' },
-      // { label: 'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi' },
-      { label: this.project.projectName },
-    ];
     this.projectTypes = [
       'Subtask',
       'Defect',
@@ -91,8 +99,14 @@ export class ProjectDetailsComponent implements OnInit {
       if (a.toLowerCase() > b.toLowerCase()) return 1
       return 0
     })
-    // this.home = {icon: 'pi pi-home', routerLink: '/'};
-    // this.dashboard = {icon: 'pi pi-menu', routerLink: '/dashboard'};
+
+    this.priorityTypes = [
+      "Lowest", "Low", "Medium", "High", "Highest"
+    ].sort((a, b) => {
+      if (a.toLowerCase() < b.toLowerCase()) return -1
+      if (a.toLowerCase() > b.toLowerCase()) return 1
+      return 0
+    })
   }
 
 
@@ -101,15 +115,40 @@ export class ProjectDetailsComponent implements OnInit {
     this.dataservice.selectedProject.subscribe((project) => {
       this.project = project || proj
     })
+    this.dataservice.allUsers.subscribe((res) => {
+      console.log(res)
+      this.allUsers = res.map((a) => {
+        return a.FirstName + ' ' + a.LastName
+      });
+    })
     setTimeout(() => {
       this.qlLink = document.getElementsByClassName('ql-link')[0];
       this.qlImage = document.getElementsByClassName('ql-image')[0];
       if (this.qlLink) this.qlLink.style.display = 'none';
       if (this.qlImage) this.qlImage.style.display = 'none';
+      this.getComments(this.project)
     }, 0)
-
-    console.log(proj)
   }
+
+
+  getComments(project) {
+    this.dataservice.getComments(project.IDX).subscribe((data: Comments[]) => {
+      this.comments = data.map((a) => {
+        a.CommentDateTime = new Date(a.CommentDateTime).toLocaleString("en", {
+          weekday: "short",
+          year: "numeric",
+          month: "2-digit",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          timeZoneName: "long"
+        })
+        return a;
+      });
+    })
+  }
+
   setStartDate(date: any) {
     if (date) {
       date.setTime(new Date(new Date(date.getTime() - (date.getTimezoneOffset() * 60 *
@@ -121,6 +160,7 @@ export class ProjectDetailsComponent implements OnInit {
   editDetails() {
     this.editBtnClicked = true;
     this.disableEdit = true;
+    window.localStorage.setItem('oldData', JSON.stringify(this.project));
   }
 
   saveDetails() {
@@ -129,6 +169,23 @@ export class ProjectDetailsComponent implements OnInit {
       console.log(res)
       this.disableEdit = false;
       this.applyStyles();
+      this.oldObj = JSON.parse(window.localStorage.getItem('oldData'));
+      for (let key in this.oldObj) {
+        let historyObj = {} as HistoryObject;
+        if (this.oldObj[key] !== this.project[key]) {
+          historyObj.fieldName = key;
+          historyObj.oldValue = this.oldObj[key];
+          historyObj.newValue = key === 'description' ? this.updatedDescription : this.project[key];
+          historyObj.IDX = this.project.IDX;
+          historyObj.UserID = this.userObject.UserID;
+          historyObj.FirstName = this.userObject.FirstName;
+          historyObj.LastName = this.userObject.LastName;
+          historyObj.PRM = this.project.PRM;
+          this.historyArr.push(historyObj)
+        }
+      }
+      console.log(this.historyArr)
+      window.localStorage.setItem('newData', JSON.stringify(this.project));
     })
 
   }
@@ -138,6 +195,37 @@ export class ProjectDetailsComponent implements OnInit {
       : (this.project.status === 'Blocked' || this.project.status === 'Abandoned') ? 'p-button-danger' : 'p-button-primary';
     this.priorityIconClass = this.project.priority === 'Lowest' ? 'fa fa-angle-double-down' : this.project.priority === 'Low' ? 'fa fa-angle-down' : this.project.priority === 'Medium' ? 'fa fa-bars'
       : this.project.priority === 'High' ? 'fa fa-angle-up' : this.project.priority === 'Highest' ? 'fa fa-angle-double-up' : 'fa fa-bars';
+  }
+
+  addComment() {
+    this.enableCommentBox = !this.enableCommentBox;
+  }
+
+  saveComment() {
+    let comment = {} as Comments;
+    comment.Comment = this.comment;
+    comment.CommentDateTime = new Date()
+    comment.UserID = this.userObject.UserID;
+    comment.PRM = this.project.PRM;
+    comment.FirstName = this.userObject.FirstName;
+    comment.LastName = this.userObject.LastName;
+    comment.IDX = this.project.IDX;
+
+    this.dataservice.saveComments(comment).subscribe((res) => {
+      this.comment = ""
+      this.addComment();
+      this.getComments(this.project)
+    })
+  }
+
+  getUserObj() {
+    this.dataservice.UserObj.subscribe((obj) => {
+      this.userObject = obj;
+    })
+  }
+
+  handleChangeDescription(val) {
+    this.updatedDescription = val;
   }
 
 }

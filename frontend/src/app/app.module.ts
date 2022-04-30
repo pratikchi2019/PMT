@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -41,15 +41,19 @@ import {DividerModule} from 'primeng/divider';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {BadgeModule} from 'primeng/badge';
 import {EditorModule} from 'primeng/editor';
-
+import { UserManagementComponent } from './user-management/user-management.component';
+import {ImageModule} from 'primeng/image';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    ProjectDetailsComponent
+    ProjectDetailsComponent,
+    UserManagementComponent
   ],
   imports: [
+    FormsModule,  
+    ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
     BrowserModule,
@@ -87,9 +91,10 @@ import {EditorModule} from 'primeng/editor';
     DividerModule,
     BreadcrumbModule,
     BadgeModule,
-    EditorModule
+    EditorModule,
+    ImageModule
   ],
-  providers: [DataserviceService, MessageService, ConfirmationService],
+  providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
