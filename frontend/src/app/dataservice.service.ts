@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { retry, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Comments } from './models/comments';
@@ -193,5 +193,28 @@ export class DataserviceService {
       catchError(this.handleError)
 
     );
+  }
+
+  // upload(files) {
+  //   const httpOptions = {
+  //     headers: new HttpHeaders().delete('Content-Type')
+  //   };
+  //   return this.http.post<any>(this.baseURL + "/upload", { files }).pipe(
+
+  //     retry(1),
+
+  //     catchError(this.handleError)
+
+  //   );
+  // }
+
+  upload(file: File): Observable<HttpEvent<any>> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    const req = new HttpRequest('POST', `${this.baseURL}/upload`, formData, {
+      reportProgress: true,
+      responseType: 'json'
+    });
+    return this.http.request(req);
   }
 }

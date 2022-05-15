@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ActivateGuard] }, // canActivate: [ActivateGuard]
-  { path: 'project-details', component: ProjectDetailsComponent, canActivate: [ActivateGuard]},
+  { path: 'project-details', component: ProjectDetailsComponent},
   { path: 'usermanagement', component: UserManagementComponent, canActivate: [UserGuard] }, //canActivate: [UserGuard]
   // { path: '**', component: PagenotfoundComponent }
 ];

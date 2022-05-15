@@ -38,7 +38,7 @@ export class ProjectDetailsComponent implements OnInit {
   progressEvent: any;
   allUsers: any;
   userObject = {} as USERMANAGEMENT;
-
+  uploadedFiles: any[] = [];
   ngOnInit(): void {
     this.getSelectedProject();
     this.getUserObj();
@@ -227,5 +227,28 @@ export class ProjectDetailsComponent implements OnInit {
   handleChangeDescription(val) {
     this.updatedDescription = val;
   }
+
+  onUpload1(event) {
+    event.preventDefault()
+    for (let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+
+    // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+  }
+
+  onUpload(ev) {
+    console.log(ev.files[0])
+    // ev.formData.append('file', 'derfrfrfrfnj');
+    const formData = new FormData(); 
+        
+      // Store form name as "file" with file data
+    formData.append("file", ev.files[0]);
+
+    this.dataservice.upload(ev.files[0]).subscribe((dt)=>{
+      console.log(dt)
+    })
+  }
+  
 
 }

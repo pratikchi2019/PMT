@@ -413,6 +413,17 @@ async function logout(idx, uid, LoginDateTime, LogoutDateTime) {
         console.log(error);
     }
 }
+async function upload(body) {
+    try {
+        let pool = await conn.connect(config);
+        let products = await pool.request()
+            .input('input_parameter2', sql.NVarChar, body)
+            .query(`UPDATE PROJECTLIST SET attachments = @input_parameter2 WHERE IDX = 202; Select * from PROJECTLIST Order By projectName`);
+        return products.recordsets;
+    } catch (error) {
+        console.log(error);
+    }
+} 
 
 module.exports = {
     getFHS: getFHS,
@@ -438,5 +449,6 @@ module.exports = {
     getStateData: getStateData,
     getProjectDetails: getProjectDetails,
     getComments: getComments,
-    saveComments: saveComments
+    saveComments: saveComments,
+    upload: upload
 }

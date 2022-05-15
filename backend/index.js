@@ -5,8 +5,15 @@ const dboperations = require('./dboperations');
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var multer = require('multer');
 var app = express();
 var router = express.Router();
+var upload = multer();
+app.use(upload.array());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -14,6 +21,24 @@ app.use(express.text());
 app.use(cors());
 
 app.use('/api', router);
+
+const multipart = require('connect-multiparty');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+const multipartMiddleware = multer({ storage: storage }).single('file');
+
+app.post('/api/upload', multipartMiddleware, (req, res) => {
+    res.json({
+        'message': 'File uploaded succesfully.'
+    });
+    console.log(req.files)
+});
 
 router.route('/data').get((request, response) => {
     dboperations.getAllData().then(result => {
@@ -34,7 +59,7 @@ router.route('/users').get((request, response) => {
 })
 
 router.route('/createUser').post((request, response) => {
-    let record = {...request.body }
+    let record = { ...request.body }
     dboperations.createUser(record).then(result => {
         console.log(result)
         return response.status(201).json(result);
@@ -42,7 +67,7 @@ router.route('/createUser').post((request, response) => {
 })
 
 router.route('/deleteUser').post((request, response) => {
-    let record = {...request.body }
+    let record = { ...request.body }
     dboperations.deleteUser(record).then(result => {
         console.log(result)
         return response.status(201).json(result[0]);
@@ -50,7 +75,7 @@ router.route('/deleteUser').post((request, response) => {
 })
 
 router.route('/updateUser').post((request, response) => {
-    let record = {...request.body }
+    let record = { ...request.body }
     dboperations.updateUser(record).then(result => {
         console.log(result)
         return response.status(201).json(result[0]);
@@ -119,7 +144,7 @@ router.route('/fhs/:id').get((request, response) => {
 })
 
 router.route('/create').post((request, response) => {
-    let record = {...request.body }
+    let record = { ...request.body }
     dboperations.createRecord(record).then(result => {
         console.log(result)
         response.status(201).json(result[0]);
@@ -127,7 +152,7 @@ router.route('/create').post((request, response) => {
 })
 
 router.route('/delete').delete((request, response) => {
-    let record = {...request.body }
+    let record = { ...request.body }
     dboperations.deleteRecord(record).then(result => {
         response.status(201).json(result);
     })
@@ -147,7 +172,7 @@ router.route('/saveComment').post((request, response) => {
 })
 
 router.route('/login').post((request, response) => {
-    let body = {...request.body }
+    let body = { ...request.body }
     dboperations.login(body).then(result => {
         console.log(result)
         if (result === "User Not Found") {
@@ -175,6 +200,13 @@ router.route('/projectDetails').post((request, response) => {
         return response.json(result[0]);
     })
 })
+
+// router.route('/upload', multipartMiddleware).post((request, response) => {
+//     console.log(request.body)
+//     dboperations.upload(request.body).then(result => {
+//         return response.json(result[0]);
+//     })
+// })
 
 var port = process.env.PORT || 8085;
 app.listen(port);

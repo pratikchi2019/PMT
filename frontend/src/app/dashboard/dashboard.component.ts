@@ -77,6 +77,7 @@ export class DashboardComponent implements OnInit {
   getData() {
     this.dataservice.getAllData().subscribe((res) => {
       this.data = res;
+      console.log(res[0].attachments)
       this.getAllUsers();
     })
   }

@@ -43,6 +43,7 @@ import {BadgeModule} from 'primeng/badge';
 import {EditorModule} from 'primeng/editor';
 import { UserManagementComponent } from './user-management/user-management.component';
 import {ImageModule} from 'primeng/image';
+
 @NgModule({
   declarations: [
     AppComponent,
