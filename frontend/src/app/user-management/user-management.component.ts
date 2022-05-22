@@ -11,6 +11,7 @@ import { Location } from '@angular/common';
 })
 export class UserManagementComponent implements OnInit {
   encrypted: string;
+  roleTypes: string[];
 
   constructor(private dataservice: DataserviceService, private messageService: MessageService, private confirmationService: ConfirmationService, private location: Location) { }
   productDialog: boolean;
@@ -49,6 +50,7 @@ export class UserManagementComponent implements OnInit {
     this.dataservice.userID.subscribe((userID) => {
       this.userID = userID
     })
+    this.roleTypes = ['Admin', 'User']
   }
 
 

@@ -112,6 +112,23 @@
                                     </ul>
                                 </ng-template>
                             </p-fileUpload>
+                            <!-- <p-card  *ngFor="let file of filesArr" header="Advanced Card" subheader="Card Subheader">
+                                <ng-template pTemplate="header">
+                                    <img *ngIf="file.Url" [src]="file.Url"/>                 
+                                </ng-template>
+                            </p-card> -->
+                            <div class="uploadedFile" *ngFor="let file of filesArr">
+                                <p-card>
+                                    <p-image [src]="sanitizer.bypassSecurityTrustUrl(file.Url)" alt="Image" height="150"
+                                        width="150" [preview]="true"></p-image>
+                                    <!-- <span style="margin-left: 10px;">{{file.FileName}}</span> -->
+                                    <span style="margin-left: 10px;"><b>{{file.FirstName}} , {{ file.LastName }}</b></span>
+                                    <span style="margin-left: 10px;"><b>{{file.UploadDateTime}}</b></span>
+                                </p-card>
+                            </div>
+                            <!-- <div class="image-preview mb-3" *ngIf="previewUrl">
+                                <img [src]="previewUrl" height="500" width="500"/>                 
+                            </div> -->
                         </p-accordionTab>
                         <p-accordionTab header="Subtasks">
                             <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium

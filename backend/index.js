@@ -10,17 +10,31 @@ var app = express();
 var router = express.Router();
 var upload = multer();
 app.use(upload.array());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+// // parse application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded())
 
+// // parse application/json
+// app.use(bodyParser.json())
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
+
+// app.use(bodyParser.text({ type: "text/plain" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.text());
+// app.use(express.text());
 app.use(cors());
 
 app.use('/api', router);
+
+app.use(function (req, res, next) {
+
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    next();
+});
 
 const multipart = require('connect-multiparty');
 const storage = multer.diskStorage({
@@ -28,17 +42,21 @@ const storage = multer.diskStorage({
         cb(null, './uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname)
+        cb(null, fileRect)
     }
 })
-const multipartMiddleware = multer({ storage: storage }).single('file');
+const multipartMiddleware = multer({ storage: storage }).single('fileRect');
 
-app.post('/api/upload', multipartMiddleware, (req, res) => {
-    res.json({
-        'message': 'File uploaded succesfully.'
-    });
-    console.log(req.files)
-});
+// app.post('/api/upload', multipartMiddleware, (req, res) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     // res.setHeader('Access-Control-Allow-Credentials', true);
+//     res.json({
+//         'message': 'File uploaded succesfully.'
+//     });
+//     console.log(req.files)
+// });
 
 router.route('/data').get((request, response) => {
     dboperations.getAllData().then(result => {
@@ -201,12 +219,18 @@ router.route('/projectDetails').post((request, response) => {
     })
 })
 
-// router.route('/upload', multipartMiddleware).post((request, response) => {
-//     console.log(request.body)
-//     dboperations.upload(request.body).then(result => {
-//         return response.json(result[0]);
-//     })
-// })
+router.route('/upload').post((request, response) => {    
+    console.log(request.body)
+    dboperations.upload(request.body).then(result => {
+        return response.json(result[0]);
+    })
+})
+
+router.route('/attachments').post((request, response) => {
+    dboperations.getAttachments(request.body.projectId).then(result => {
+        return response.json(result[0]);
+    })
+})
 
 var port = process.env.PORT || 8085;
 app.listen(port);

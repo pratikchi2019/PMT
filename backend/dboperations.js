@@ -214,7 +214,7 @@ async function updateData(record) {
             history = @history, subTasks = @subTasks, projectManager = @projectManager, health = @health,
             region = @region, goLive = @goLive, checklist = @checklist, progress = @progress 
             WHERE IDX = @IDX; Select * from PROJECTLIST Order By projectName`)
-            console.log(product)
+        console.log(product)
         return product.recordsets;
     } catch (error) {
         console.log(error);
@@ -240,7 +240,7 @@ async function getSLEH() {
     } catch (error) {
         console.log(error);
     }
-} 
+}
 
 async function getProjectDetails(projectId) {
     try {
@@ -253,7 +253,20 @@ async function getProjectDetails(projectId) {
     } catch (error) {
         console.log(error);
     }
-} 
+}
+
+async function getAttachments(projectId) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('input_parameter', sql.Int, projectId)
+            .query(`SELECT * from Attachments where IDX = @input_parameter`);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 async function createRecord(record) {
@@ -261,27 +274,27 @@ async function createRecord(record) {
     try {
         let pool = await conn.connect(config);
         let insertProduct = await pool.request()
-        .input('PRM', record.PRM)
-        .input('projectName', record.projectName)
-        .input('issueType', record.issueType)
-        .input('priority', record.priority)
-        .input('status', record.status)
-        .input('assignee', record.assignee)
-        .input('reporter', record.reporter)
-        .input('description', record.description)
-        .input('attachments', record.attachments)
-        .input('startDate', record.startDate)
-        .input('estimatedHours', record.estimatedHours)
-        .input('parentTaskLink', record.parentTaskLink)
-        .input('comments', record.comments)
-        .input('history', record.history)
-        .input('subTasks', record.subTasks)
-        .input('projectManager', record.projectManager)
-        .input('health', record.health)
-        .input('region', record.region)
-        .input('goLive', record.goLive)
-        .input('checklist', record.checklist)
-        .input('progress', record.progress)
+            .input('PRM', record.PRM)
+            .input('projectName', record.projectName)
+            .input('issueType', record.issueType)
+            .input('priority', record.priority)
+            .input('status', record.status)
+            .input('assignee', record.assignee)
+            .input('reporter', record.reporter)
+            .input('description', record.description)
+            .input('attachments', record.attachments)
+            .input('startDate', record.startDate)
+            .input('estimatedHours', record.estimatedHours)
+            .input('parentTaskLink', record.parentTaskLink)
+            .input('comments', record.comments)
+            .input('history', record.history)
+            .input('subTasks', record.subTasks)
+            .input('projectManager', record.projectManager)
+            .input('health', record.health)
+            .input('region', record.region)
+            .input('goLive', record.goLive)
+            .input('checklist', record.checklist)
+            .input('progress', record.progress)
             .query(`INSERT INTO PROJECTLIST (PRM, projectName, issueType, priority, status,  assignee,
                 reporter, description, startDate, estimatedHours, parentTaskLink,
                 projectManager, health, region, 
@@ -414,16 +427,30 @@ async function logout(idx, uid, LoginDateTime, LogoutDateTime) {
     }
 }
 async function upload(body) {
+    let file = body?.file;
     try {
         let pool = await conn.connect(config);
-        let products = await pool.request()
-            .input('input_parameter2', sql.NVarChar, body)
-            .query(`UPDATE PROJECTLIST SET attachments = @input_parameter2 WHERE IDX = 202; Select * from PROJECTLIST Order By projectName`);
-        return products.recordsets;
+        // let products = await pool.request()
+        //     .input('input_parameter2', sql.NVarChar, JSON.stringify(body))
+        //     .query(`UPDATE PROJECTLIST SET attachments = @input_parameter2 WHERE IDX = 206; Select * from PROJECTLIST Order By projectName`);
+        let product = await pool.request()
+            .input('IDX', sql.Int, file.IDX)
+            .input('PRM', sql.Int, file.PRM)
+            .input('UploadDateTime', sql.NVarChar, file.UploadDateTime)
+            .input('UserID', sql.NVarChar, file.UserID)
+            .input('Url', sql.NVarChar, file.url)
+            .input('FirstName', sql.NVarChar, file.FirstName)
+            .input('LastName', sql.NVarChar, file.LastName)
+            .input('FileName', sql.NVarChar, file.name)
+            .input('FileSize', sql.NVarChar, file.FileSize)
+            .query(`INSERT INTO Attachments (IDX, PRM, UploadDateTime, UserID, Url,  FirstName,
+                LastName, FileName, FileSize) VALUES (@IDX, @PRM, @UploadDateTime, @UserID, @Url, @FirstName, 
+                    @LastName, @FileName, @FileSize) Select * from Attachments Order By UploadDateTime DESC `);
+        return product.recordsets;
     } catch (error) {
         console.log(error);
     }
-} 
+}
 
 module.exports = {
     getFHS: getFHS,
@@ -450,5 +477,6 @@ module.exports = {
     getProjectDetails: getProjectDetails,
     getComments: getComments,
     saveComments: saveComments,
-    upload: upload
+    upload: upload,
+    getAttachments: getAttachments
 }

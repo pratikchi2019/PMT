@@ -12,12 +12,16 @@
             <li><a routerLink="/login" routerLinkActive="active">Home</a></li>
             <li><a routerLink="/inventory" routerLinkActive="active">MDI Data</a></li>
         </ul> -->
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
-            <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav active">
+            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/dashboard" routerLinkActive="['active']">Dashboard</a></li>
         </ul> 
 
         <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
-            <li><a routerLink="/usermanagement" routerLinkActive="active">User Management</a></li>
+            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/usermanagement" routerLinkActive="['active']">User Management</a></li>
+        </ul> 
+
+        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/stats" routerLinkActive="['active']">Statistics</a></li>
         </ul> 
 
         <ul *ngIf="(dataservice.authenticated$ | async) === false" class="nav navbar-nav navbar-right">

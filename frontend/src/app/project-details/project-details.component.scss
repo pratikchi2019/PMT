@@ -83,3 +83,8 @@
     margin-top: 4px;
     padding: inherit;
 }
+
+:host ::ng-deep .uploadedFile, .p-card{
+    display: inline;
+    margin-right: 10px;
+}

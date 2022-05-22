@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -31,18 +31,22 @@ import { TooltipModule } from 'primeng/tooltip';
 import { PasswordModule } from 'primeng/password';
 import { DataserviceService } from './dataservice.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {TreeTableModule} from 'primeng/treetable';
-import {TreeModule} from 'primeng/tree';
-import {AccordionModule} from 'primeng/accordion';
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeModule } from 'primeng/tree';
+import { AccordionModule } from 'primeng/accordion';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
-import {SplitButtonModule} from 'primeng/splitbutton';
-import {SplitterModule} from 'primeng/splitter';
-import {DividerModule} from 'primeng/divider';
-import {BreadcrumbModule} from 'primeng/breadcrumb';
-import {BadgeModule} from 'primeng/badge';
-import {EditorModule} from 'primeng/editor';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { SplitterModule } from 'primeng/splitter';
+import { DividerModule } from 'primeng/divider';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { BadgeModule } from 'primeng/badge';
+import { EditorModule } from 'primeng/editor';
 import { UserManagementComponent } from './user-management/user-management.component';
-import {ImageModule} from 'primeng/image';
+import { ImageModule } from 'primeng/image';
+import { StatsComponent } from './stats/stats.component';
+import { ChartModule } from 'primeng/chart';
+import { AppConfigService } from './appconfigservice.service';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [
@@ -50,10 +54,11 @@ import {ImageModule} from 'primeng/image';
     LoginComponent,
     DashboardComponent,
     ProjectDetailsComponent,
-    UserManagementComponent
+    UserManagementComponent,
+    StatsComponent
   ],
   imports: [
-    FormsModule,  
+    FormsModule,
     ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
@@ -93,9 +98,11 @@ import {ImageModule} from 'primeng/image';
     BreadcrumbModule,
     BadgeModule,
     EditorModule,
-    ImageModule
+    ImageModule,
+    ChartModule,
+    CardModule
   ],
-  providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder],
+  providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder, AppConfigService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

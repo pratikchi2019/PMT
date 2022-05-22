@@ -16,8 +16,7 @@
     </p-toolbar>
 
     <p-table [columns]="cols" id="my-table" #dt [value]="tabledata" [rowsPerPageOptions]="[5,10,25]" [paginator]="true"
-        [rows]="5" [showCurrentPageReport]="true"
-        [globalFilterFields]="['FirstName', 'LastName', 'Role', 'UserID']"
+        [rows]="5" [showCurrentPageReport]="true" [globalFilterFields]="['FirstName', 'LastName', 'Role', 'UserID']"
         [(selection)]="selectedRecords" [rowHover]="true" dataKey="IDX"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
@@ -75,8 +74,8 @@
     <ng-template pTemplate="content">
         <div class="p-field">
             <label for="FirstName">Firstname</label> &nbsp;
-            <input style="margin-top: 5px;" type="text" pInputText id="FirstName" [(ngModel)]="record.FirstName" required
-                autofocus />
+            <input style="margin-top: 5px;" type="text" pInputText id="FirstName" [(ngModel)]="record.FirstName"
+                required autofocus />
             <small class="p-error" *ngIf="submitted && !record.FirstName">FirstName is required.</small>
         </div>
         <div class="p-field">
@@ -87,8 +86,10 @@
         </div>
         <div class="p-field">
             <label for="Role">Role</label> &nbsp;
-            <input style="margin-top: 5px;" type="text" pInputText id="Role" [(ngModel)]="record.Role" required
-                autofocus />
+            <!-- <input style="margin-top: 5px;" type="text" pInputText id="Role" [(ngModel)]="record.Role" required
+                autofocus /> -->
+            <p-dropdown [options]="roleTypes" [(ngModel)]="record.Role" placeholder="Select a Role"
+                [showClear]="true"></p-dropdown>
             <small class="p-error" *ngIf="submitted && !record.Role">Role is required.</small>
         </div>
         <div class="p-field">
@@ -99,7 +100,7 @@
         </div>
         <div class="p-field">
             <label for="Password">Password</label> &nbsp;
-                <p-password [(ngModel)]="record.Password" [toggleMask]="true"></p-password>
+            <p-password [(ngModel)]="record.Password" [toggleMask]="true"></p-password>
             <small class="p-error" *ngIf="submitted && !record.Password">Password is required.</small>
         </div>
     </ng-template>

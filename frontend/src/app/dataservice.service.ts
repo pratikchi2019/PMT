@@ -3,6 +3,7 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest } from '@an
 import { retry, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Comments } from './models/comments';
+import * as Rx from 'rxjs/Rx'
 @Injectable({
   providedIn: 'root'
 })
@@ -208,13 +209,46 @@ export class DataserviceService {
   //   );
   // }
 
-  upload(file: File): Observable<HttpEvent<any>> {
-    const formData: FormData = new FormData();
-    formData.append('file', file);
-    const req = new HttpRequest('POST', `${this.baseURL}/upload`, formData, {
-      reportProgress: true,
-      responseType: 'json'
-    });
-    return this.http.request(req);
+  upload(file): Observable<any> {
+   const httpOptions = {
+      headers: new HttpHeaders().delete('Content-Type')
+    };
+    return this.http.post<any>(this.baseURL + "/upload", { file }).pipe(
+
+      retry(1),
+
+      catchError(this.handleError)
+
+    );
+    // return new Observable(function (observer) {
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.open('POST', `http://localhost:8085/api/upload`);
+    //   // xhr.setRequestHeader('X-PINGOTHER', 'pingpong');
+    //   xhr.setRequestHeader('Content-Type', 'application/xml');
+    //   // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    //   xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+    //   xhr.setRequestHeader('Accept', 'application/json');
+    //   xhr.onreadystatechange = function () {
+    //     if (xhr.readyState == 4) {
+    //       if (xhr.status == 200) {
+    //         var data = xhr.responseText;
+    //         // observer.next(data);
+
+    //       }
+    //     }
+    //   };
+    //   xhr.addEventListener("progress", function (evt) {
+    //     //Do some progress calculations
+    //     observer.next(xhr.responseText);
+    //     observer.complete();
+    //   }, false);
+    //   // observer.next(xhr);
+    //   xhr.send(formData);
+    //   return xhr.response;
+    // })
+  }
+
+  getAttachments(projectId) {
+    return this.http.post<any>(this.baseURL + '/attachments', { projectId })
   }
 }

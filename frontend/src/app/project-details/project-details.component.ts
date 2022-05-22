@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MenuItem } from 'primeng/api';
 import { DataserviceService } from '../dataservice.service';
 import { Comments } from '../models/comments';
@@ -15,8 +16,10 @@ export class ProjectDetailsComponent implements OnInit {
   oldObj: any;
   historyArr: any = [];
   updatedDescription: any;
+  previewUrl: any;
+  filesArr: any[];
 
-  constructor(private dataservice: DataserviceService) { }
+  constructor(private dataservice: DataserviceService, private sanitizer:DomSanitizer) { }
   items: any[];
   dashboard: MenuItem;
   project: NodeData;
@@ -107,6 +110,7 @@ export class ProjectDetailsComponent implements OnInit {
       if (a.toLowerCase() > b.toLowerCase()) return 1
       return 0
     })
+    // this.getAttachments();
   }
 
 
@@ -236,19 +240,62 @@ export class ProjectDetailsComponent implements OnInit {
 
     // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
   }
+  
 
   onUpload(ev) {
-    console.log(ev.files[0])
-    // ev.formData.append('file', 'derfrfrfrfnj');
-    const formData = new FormData(); 
-        
-      // Store form name as "file" with file data
-    formData.append("file", ev.files[0]);
+    let formData = new FormData();
+    formData.append("fileRect", ev.files[0]);
+    var object = {};
+    formData.forEach((value, key) => object[key] = value);
+    this.filesArr = [];
+    let files = ev.files;
+    for (let i = 0; i < files.length; i++) {
+      let file = {};
+      file['url'] = files[i].objectURL.changingThisBreaksApplicationSecurity;
+      file['name'] = files[i].name;
+      file['IDX'] = this.project.IDX;
+      file['UserID'] = this.userObject?.UserID || "";
+      file['FirstName'] = this.userObject?.FirstName || "";
+      file['LastName'] = this.userObject?.LastName || "";
+      file['PRM'] = this.project.PRM;
+      file['FileSize'] = files[i].size;
+      file['UploadDateTime'] =  new Date().toLocaleString("en", {
+        weekday: "short",
+        year: "numeric",
+        month: "2-digit",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        timeZoneName: "long"
+      })
+     
+      this.dataservice.upload(file).subscribe((dt) => {
+        console.log(dt)
+        // dt.map((a)=>{
+        //   a.Url = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(new Blob(a.Url, {type: "application/zip"})));
+        // });
+        this.filesArr = dt;
+        // let url = JSON.parse(dt[1].attachments).file.url
+        // this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+        // var link = document.createElement("a");
+        // link.download = "name";
+        // link.href = url;
+        // document.body.appendChild(link);
+        // // link.click();
+        // document.body.removeChild(link);
+        // // delete link;
+        // let sanitizedUrl = this.sanitizer.bypassSecurityTrustUrl(url)
+      })
+    }
+    
+  }
 
-    this.dataservice.upload(ev.files[0]).subscribe((dt)=>{
-      console.log(dt)
+  getAttachments() {
+    this.dataservice.getAttachments(this.project.IDX).subscribe((files) => {
+      this.filesArr = files
     })
   }
-  
+
 
 }
