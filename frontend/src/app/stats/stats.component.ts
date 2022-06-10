@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppConfigService } from '../appconfigservice.service';
+import { DataserviceService } from '../dataservice.service';
 import { AppConfig } from '../models/appconfig';
 @Component({
   selector: 'app-stats',
@@ -15,27 +16,12 @@ export class StatsComponent implements OnInit {
   subscription: Subscription;
 
   config: AppConfig;
-  constructor(private configService: AppConfigService) { }
+  allData: any;
+  constructor(private configService: AppConfigService, private dataservice: DataserviceService) { }
 
   ngOnInit(): void {
-    this.data = {
-      labels: ['A', 'B', 'C'],
-      datasets: [
-        {
-          data: [300, 50, 100],
-          backgroundColor: [
-            "#42A5F5",
-            "#66BB6A",
-            "#FFA726"
-          ],
-          hoverBackgroundColor: [
-            "#64B5F6",
-            "#81C784",
-            "#FFB74D"
-          ]
-        }
-      ]
-    };
+    this.getData();
+
 
     this.config = this.configService.config;
     this.updateChartOptions();
@@ -71,6 +57,39 @@ export class StatsComponent implements OnInit {
         }
       }
     }
+  }
+
+  getData() {
+    this.dataservice.getAllData().subscribe((res) => {
+      this.allData = res;
+      let labels = ['In Progress', 'In Test Env', 'Done', 'Blocked'];
+
+      let data = [this.allData.filter((x) => x.status == 'In Progress').length, 
+      this.allData.filter((x) => x.status == 'In Test Env').length, 
+      this.allData.filter((x) => x.status == 'Done').length,
+      this.allData.filter((x) => x.status == 'Blocked').length]
+
+      this.data = {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            backgroundColor: [
+              "#FFA726",
+              "#42A5F5",
+              "#66BB6A",
+              "#cf1208"
+            ],
+            hoverBackgroundColor: [
+              "#FFB74D",
+              "#64B5F6",
+              "#81C784",
+              "#e3665f"
+            ]
+          }
+        ]
+      };
+    })
   }
 
 }

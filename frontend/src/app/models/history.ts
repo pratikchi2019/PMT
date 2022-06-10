@@ -8,4 +8,5 @@ export interface HistoryObject {
     fieldName?: string,
     oldValue?: string,
     newValue?: string,
+    updatedDateTime?: string
 }

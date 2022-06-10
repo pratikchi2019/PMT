@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TreeNode } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DataserviceService } from '../dataservice.service';
-import { Basenode } from '../models/basenode';
 import { NodeData } from '../models/NodeData';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { DialogService } from 'primeng/dynamicdialog';
+import { SubtaskComponent } from '../subtask/subtask.component';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -28,12 +29,12 @@ export class DashboardComponent implements OnInit {
   priorityTypes: string[];
 
   projectTypes: string[];
-  
+
   statusTypes: string[];
 
   progress: any;
 
-  constructor(private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder) { }
+  constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     // this.files = [];
@@ -77,13 +78,11 @@ export class DashboardComponent implements OnInit {
   getData() {
     this.dataservice.getAllData().subscribe((res) => {
       this.data = res;
-      console.log(res[0].attachments)
       this.getAllUsers();
+      // this.data.map((x)=> {
+      //   x.subTasks = 
+      // })
     })
-  }
-
-  nodeCreator(node: Basenode) {
-
   }
 
   openNew() {
@@ -95,7 +94,7 @@ export class DashboardComponent implements OnInit {
   getProjectDetails(id) {
     this.dataservice.getProjectDetails(id).subscribe((res) => {
       this.dataservice.setselectedProject(res[0]);
-      this.router.navigate(['project-details'])
+      this.router.navigate([`project-details/${id}`])
     }, (error) => {
       console.log(error)
     })
@@ -106,7 +105,7 @@ export class DashboardComponent implements OnInit {
   }
 
   createProject() {
-    this.dataservice.createRecord(this.form.value).subscribe((res)=>{
+    this.dataservice.createRecord(this.form.value).subscribe((res) => {
       console.log(res)
       this.productDialog = false;
       this.form.reset();
@@ -120,6 +119,38 @@ export class DashboardComponent implements OnInit {
       this.dataservice.allUsers.next(res);
       console.log(res)
     })
+  }
+
+  show(record) {
+    const ref = this.dialogService.open(SubtaskComponent, {
+      data: {
+        id: record.IDX
+      },
+      header: `Subtasks linked with ${record.projectName}`,
+      width: '70%'
+    });
+  }
+  deleteRecord(record) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete ' + record.projectName + '?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.dataservice.deleteRecord(record).subscribe((data) => {
+          console.log(data)
+          this.data = this.data.filter(val => val.IDX !== record.IDX);
+        })
+        this.record = {};
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Record Deleted', life: 3000 });
+      }
+    });
+  }
+
+  statusChangeHandler(e, popup) {
+    if (popup) {
+      let progress = e.value.endsWith('In Progress') ? 20 : e.value.endsWith('In Review') ? 40 : e.value.endsWith('In Test Env') ? 60 : e.value.endsWith('QA Passed') ? 80 : e.value.endsWith('In Production') ? 90 : e.value.endsWith('Done') ? 100 : 0;
+      this.form.get("progress").setValue(progress);
+    }
   }
 
 }

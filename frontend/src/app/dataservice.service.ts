@@ -4,6 +4,7 @@ import { retry, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Comments } from './models/comments';
 import * as Rx from 'rxjs/Rx'
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,7 +23,7 @@ export class DataserviceService {
   selectedProject: BehaviorSubject<any> = new BehaviorSubject(null);
   UserObj: BehaviorSubject<any> = new BehaviorSubject(null);
   allUsers: BehaviorSubject<any> = new BehaviorSubject(null);
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,  private router?: Router) { }
   baseURL = "http://localhost:8085/api"
   //baseURL = "http://rdcquonapp001.chi.catholichealth.net:8085/api"
   //baseURL = "https://rdcquonapp001.chi.catholichealth.net/api"
@@ -107,6 +108,9 @@ export class DataserviceService {
   }
 
   createRecord(record: any) {
+    if(record.issueType === 'Subtask') {
+      record.parentTaskLink = `${location.origin}/project-details/${record.parentTaskId}`
+    }
     return this.http.post<any>(this.baseURL + "/create", record).pipe(
 
       retry(1),
@@ -209,17 +213,32 @@ export class DataserviceService {
   //   );
   // }
 
-  upload(file): Observable<any> {
-   const httpOptions = {
-      headers: new HttpHeaders().delete('Content-Type')
-    };
-    return this.http.post<any>(this.baseURL + "/upload", { file }).pipe(
+  upload(file) {
 
-      retry(1),
+    let req = new XMLHttpRequest();
+    req.open('POST', this.baseURL + '/upload')
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    req.setRequestHeader('Access-Control-Allow-Origin', '*')
 
-      catchError(this.handleError)
+    req.send(file)
+    for (var value of file.values()) {
+      console.log(value);
+   }
 
-    );
+    // return this.http.post(this.baseURL + '/upload', file)
+    // const httpOptions = {
+    //   headers: new HttpHeaders({ 'Content-Type': 'application/json' }), body: file
+    // };
+    // const headers = new HttpHeaders();
+    // headers.append('Content-Type', 'multipart/form-data');
+    // headers.append('Accept', 'application/json');
+    // return this.http.post<any>(this.baseURL + "/upload", { file }).pipe(
+
+    //   retry(1),
+
+    //   catchError(this.handleError)
+
+    // );
     // return new Observable(function (observer) {
     //   const xhr = new XMLHttpRequest();
     //   xhr.open('POST', `http://localhost:8085/api/upload`);
@@ -250,5 +269,23 @@ export class DataserviceService {
 
   getAttachments(projectId) {
     return this.http.post<any>(this.baseURL + '/attachments', { projectId })
+  }
+
+  saveHistory(historyObj) {
+    return this.http.post<any>(this.baseURL + "/saveHistory", historyObj).pipe(
+
+      retry(1),
+
+      catchError(this.handleError)
+
+    );
+  }
+
+  getHistory(IDX) {
+    return this.http.post<any>(this.baseURL + '/getHistory', { IDX })
+  }
+
+  getSubtasks(IDX) {
+    return this.http.post<any>(this.baseURL + '/getSubtasks', { IDX })
   }
 }

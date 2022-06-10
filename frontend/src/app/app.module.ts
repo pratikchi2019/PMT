@@ -47,7 +47,8 @@ import { StatsComponent } from './stats/stats.component';
 import { ChartModule } from 'primeng/chart';
 import { AppConfigService } from './appconfigservice.service';
 import { CardModule } from 'primeng/card';
-
+import { SubtaskComponent } from './subtask/subtask.component';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +56,11 @@ import { CardModule } from 'primeng/card';
     DashboardComponent,
     ProjectDetailsComponent,
     UserManagementComponent,
-    StatsComponent
+    StatsComponent,
+    SubtaskComponent
+  ],
+  entryComponents: [
+    SubtaskComponent
   ],
   imports: [
     FormsModule,
@@ -100,9 +105,10 @@ import { CardModule } from 'primeng/card';
     EditorModule,
     ImageModule,
     ChartModule,
-    CardModule
+    CardModule,
+    DynamicDialogModule
   ],
-  providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder, AppConfigService],
+  providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder, AppConfigService, DialogService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

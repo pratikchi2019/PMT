@@ -1,0 +1,36 @@
+<p-table #dt [value]="data" [rows]="10"
+    [globalFilterFields]="['projectName','country.name','representative.name','status']" responsiveLayout="scroll"
+    [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name
+            </th>
+            <th>Priority
+            </th>
+            <th>Status
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-record>
+        <tr>
+            <td>{{record.projectName}}</td>
+            <td>{{record.priority}}</td>
+            <td><span
+                    [class]="'product-badge status-' + (record.status ? record.status.toLowerCase() : '')">{{record.status}}</span>
+            </td>
+            <td>
+                <button pTooltip="Go to the details of this record" tooltipPosition="left" pButton pRipple
+                    icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="getProjectDetails(record.IDX)"
+                    ></button>
+                <button pTooltip="Delete this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger" (click)="deleteRecord(record)"></button>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate=" summary">
+        <div class="flex align-items-center justify-content-between">
+            In total there are {{data ? data.length : 0 }} records.
+        </div>
+    </ng-template>
+</p-table>

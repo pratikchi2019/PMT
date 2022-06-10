@@ -158,7 +158,29 @@ async function saveComments(comment) {
             .input('LastName', sql.NVarChar, comment.LastName)
             .query(`INSERT INTO Comments (IDX, PRM, CommentDateTime, UserID, Comment,  FirstName,
                 LastName) VALUES (@IDX, @PRM, @CommentDateTime, @UserID, @Comment, @FirstName, 
-                    @LastName) Select * from Comments Order By CommentDateTime DESC `);
+                    @LastName) Select * from Comments where IDX = @IDX Order By CommentDateTime DESC `);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+async function saveHistory(comment) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('IDX', sql.Int, comment.IDX)
+            .input('PRM', sql.Int, comment.PRM)
+            .input('updatedDateTime', sql.NVarChar, comment.updatedDateTime)
+            .input('UserID', sql.NVarChar, comment.UserID)
+            .input('oldValue', sql.NVarChar, comment.oldValue)
+            .input('newValue', sql.NVarChar, comment.newValue)
+            .input('FirstName', sql.NVarChar, comment.FirstName)
+            .input('LastName', sql.NVarChar, comment.LastName)
+            .input('fieldName', sql.NVarChar, comment.fieldName)
+            .query(`INSERT INTO History (IDX, PRM, updatedDateTime, UserID, oldValue, newValue, FirstName,
+                LastName, fieldName) VALUES (@IDX, @PRM, @updatedDateTime, @UserID, @oldValue, @newValue, @FirstName, 
+                    @LastName, @fieldName) Select * from History where IDX = @IDX Order By updatedDateTime DESC `);
         return product.recordsets;
 
     } catch (error) {
@@ -185,7 +207,7 @@ async function updateData(record) {
         let pool = await conn.connect(config);
         let product = await pool.request()
             .input('IDX', record.IDX)
-            //  .input('EMR', record.EMR)
+            .input('parentTaskId', record.parentTaskId)
             .input('PRM', record.PRM)
             .input('projectName', record.projectName)
             .input('issueType', record.issueType)
@@ -207,7 +229,7 @@ async function updateData(record) {
             .input('goLive', record.goLive)
             .input('checklist', record.checklist)
             .input('progress', record.progress)
-            .query(`UPDATE PROJECTLIST SET PRM = @PRM, projectName = @projectName,
+            .query(`UPDATE PROJECTLIST SET parentTaskId = @parentTaskId, PRM = @PRM, projectName = @projectName,
             issueType = @issueType, priority = @priority, status = @status, assignee = @assignee, reporter = @reporter,
             description = @description, attachments = @attachments, startDate = @startDate, estimatedHours = @estimatedHours, 
             parentTaskLink = @parentTaskLink, comments = @comments,
@@ -274,6 +296,7 @@ async function createRecord(record) {
     try {
         let pool = await conn.connect(config);
         let insertProduct = await pool.request()
+            .input('parentTaskId', record.parentTaskId)
             .input('PRM', record.PRM)
             .input('projectName', record.projectName)
             .input('issueType', record.issueType)
@@ -295,12 +318,30 @@ async function createRecord(record) {
             .input('goLive', record.goLive)
             .input('checklist', record.checklist)
             .input('progress', record.progress)
-            .query(`INSERT INTO PROJECTLIST (PRM, projectName, issueType, priority, status,  assignee,
+            .query(`INSERT INTO PROJECTLIST (parentTaskId, PRM, projectName, issueType, priority, status,  assignee,
                 reporter, description, startDate, estimatedHours, parentTaskLink,
                 projectManager, health, region, 
-                goLive) VALUES (@PRM, @projectName, @issueType, @priority, @status, @assignee, 
+                goLive, progress) VALUES (@parentTaskId, @PRM, @projectName, @issueType, @priority, @status, @assignee, 
                     @reporter, @description, @startDate, @estimatedHours, @parentTaskLink, @projectManager, @health, @region,
-                    @goLive) Select * from PROJECTLIST Order By projectName`);
+                    @goLive, @progress); Select * from PROJECTLIST Order By projectName`);
+
+        setTimeout(() => {
+            if (record.parentTaskId) {
+                let subtasks = getSubtasks(record.parentTaskId);
+                console.log("sumProgress *******************************************")
+                subtasks.then((val) => {
+                    let sumProgress = 0;
+                    for (let i = 0; i < val[0].length; i++) {
+                        sumProgress += Number(val[0][i].progress);
+                    }
+                    console.log(sumProgress)
+                    insertProduct = pool.request()
+                        .input('parentTaskId', record.parentTaskId)
+                        .query(`UPDATE PROJECTLIST SET progress = ${Math.round(sumProgress / val[0].length)}, subTasks = 'true'
+        WHERE IDX = @parentTaskId; Select * from PROJECTLIST Order By projectName`)
+                })
+            }
+        }, 500)
         return insertProduct.recordsets;
 
     } catch (err) {
@@ -365,7 +406,7 @@ async function deleteRecord(record) {
         let pool = await conn.connect(config);
         let deleteRecord = await pool.request()
             .input('input_parameter', sql.Int, record.IDX)
-            .query(`DELETE FROM MDIDetails WHERE IDX = @input_parameter`);
+            .query(`DELETE FROM PROJECTLIST WHERE IDX = @input_parameter`);
         return deleteRecord.recordsets;
     } catch (err) {
         console.log(err);
@@ -430,27 +471,55 @@ async function upload(body) {
     let file = body?.file;
     try {
         let pool = await conn.connect(config);
-        // let products = await pool.request()
-        //     .input('input_parameter2', sql.NVarChar, JSON.stringify(body))
-        //     .query(`UPDATE PROJECTLIST SET attachments = @input_parameter2 WHERE IDX = 206; Select * from PROJECTLIST Order By projectName`);
         let product = await pool.request()
-            .input('IDX', sql.Int, file.IDX)
-            .input('PRM', sql.Int, file.PRM)
-            .input('UploadDateTime', sql.NVarChar, file.UploadDateTime)
-            .input('UserID', sql.NVarChar, file.UserID)
-            .input('Url', sql.NVarChar, file.url)
-            .input('FirstName', sql.NVarChar, file.FirstName)
-            .input('LastName', sql.NVarChar, file.LastName)
-            .input('FileName', sql.NVarChar, file.name)
-            .input('FileSize', sql.NVarChar, file.FileSize)
-            .query(`INSERT INTO Attachments (IDX, PRM, UploadDateTime, UserID, Url,  FirstName,
-                LastName, FileName, FileSize) VALUES (@IDX, @PRM, @UploadDateTime, @UserID, @Url, @FirstName, 
-                    @LastName, @FileName, @FileSize) Select * from Attachments Order By UploadDateTime DESC `);
+            .input('input_parameter2', sql.NVarChar, body)
+            .query(`UPDATE PROJECTLIST SET attachments = @input_parameter2 WHERE IDX = 206; Select * from PROJECTLIST Order By projectName`);
+        // let product = await pool.request()
+        //     .input('IDX', sql.Int, file.IDX)
+        //     .input('PRM', sql.Int, file.PRM)
+        //     .input('UploadDateTime', sql.NVarChar, file.UploadDateTime)
+        //     .input('UserID', sql.NVarChar, file.UserID)
+        //     .input('Url', sql.NVarChar, file.url)
+        //     .input('FirstName', sql.NVarChar, file.FirstName)
+        //     .input('LastName', sql.NVarChar, file.LastName)
+        //     .input('FileName', sql.NVarChar, file.name)
+        //     .input('FileSize', sql.NVarChar, file.FileSize)
+        //     .query(`INSERT INTO Attachments (IDX, PRM, UploadDateTime, UserID, Url,  FirstName,
+        //         LastName, FileName, FileSize) VALUES (@IDX, @PRM, @UploadDateTime, @UserID, @Url, @FirstName, 
+        //             @LastName, @FileName, @FileSize) Select * from Attachments Order By UploadDateTime DESC `);
         return product.recordsets;
     } catch (error) {
         console.log(error);
     }
 }
+
+async function getHistory(IDX) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('input_parameter', sql.Int, IDX)
+            .query(`Select * from History where IDX = @input_parameter Order By updatedDateTime DESC `);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getSubtasks(IDX) {
+    try {
+        let pool = await conn.connect(config);
+        let product = await pool.request()
+            .input('input_parameter', sql.Int, IDX)
+            .query(`Select * from PROJECTLIST where parentTaskId = @input_parameter Order By projectName`);
+        return product.recordsets;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 
 module.exports = {
     getFHS: getFHS,
@@ -478,5 +547,8 @@ module.exports = {
     getComments: getComments,
     saveComments: saveComments,
     upload: upload,
-    getAttachments: getAttachments
+    getAttachments: getAttachments,
+    saveHistory: saveHistory,
+    getHistory: getHistory,
+    getSubtasks: getSubtasks
 }

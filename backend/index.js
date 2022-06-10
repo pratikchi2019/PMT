@@ -19,8 +19,8 @@ app.use(upload.array());
 // app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 
 // app.use(bodyParser.text({ type: "text/plain" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 // app.use(express.text());
 app.use(cors());
 
@@ -42,21 +42,21 @@ const storage = multer.diskStorage({
         cb(null, './uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, fileRect)
+        cb(null, 'file')
     }
 })
-const multipartMiddleware = multer({ storage: storage }).single('fileRect');
+const multipartMiddleware = multer({ storage: storage }).single('file');
 
-// app.post('/api/upload', multipartMiddleware, (req, res) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-//     // res.setHeader('Access-Control-Allow-Credentials', true);
-//     res.json({
-//         'message': 'File uploaded succesfully.'
-//     });
-//     console.log(req.files)
-// });
+app.post('/api/upload', multipartMiddleware, (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.json({
+        'message': 'File uploaded succesfully.'
+    });
+    console.log(req.files)
+});
 
 router.route('/data').get((request, response) => {
     dboperations.getAllData().then(result => {
@@ -221,13 +221,31 @@ router.route('/projectDetails').post((request, response) => {
 
 router.route('/upload').post((request, response) => {    
     console.log(request.body)
-    dboperations.upload(request.body).then(result => {
-        return response.json(result[0]);
-    })
+    // dboperations.upload(request.body).then(result => {
+    //     return response.json(result[0]);
+    // })
 })
 
 router.route('/attachments').post((request, response) => {
     dboperations.getAttachments(request.body.projectId).then(result => {
+        return response.json(result[0]);
+    })
+})
+
+router.route('/saveHistory').post((request, response) => {
+    dboperations.saveHistory(request.body).then(result => {
+        return response.json(result[0]);
+    })
+})
+
+router.route('/getHistory').post((request, response) => {
+    dboperations.getHistory(request.body.IDX).then(result => {
+        return response.json(result[0]);
+    })
+})
+
+router.route('/getSubtasks').post((request, response) => {
+    dboperations.getSubtasks(request.body.IDX).then(result => {
         return response.json(result[0]);
     })
 })

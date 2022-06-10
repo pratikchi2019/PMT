@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div class="header-img">
 </div>
 <div class="header-main">
@@ -15,6 +17,8 @@
         <div class="p-toolbar-group-left">
             <p-button label="Edit" icon="pi pi-pencil" class="mr-6" (click)="editDetails()" [disabled]="disableEdit">
             </p-button> &nbsp;
+            <p-button *ngIf="disableEdit" label="Cancel" icon="pi pi-times" class="mr-6" styleClass="p-button-danger" (click)="cancelHandler()"
+                [disabled]="!disableEdit"></p-button> &nbsp;
             <p-button label="Save" icon="pi pi-save" class="mr-6" styleClass="p-button-success" (click)="saveDetails()"
                 [disabled]="!disableEdit"></p-button>
         </div>
@@ -46,7 +50,7 @@
                                             [styleClass]="statusBtnStyleClass"></p-button>
                                     </div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown [options]="statusTypes" [(ngModel)]="project.status"
+                                        <p-dropdown  (onChange)="statusChangeHandler($event)" [options]="statusTypes" [(ngModel)]="project.status"
                                             placeholder="Select a Status" [showClear]="true"></p-dropdown>
                                     </div>
                                 </div>
@@ -61,12 +65,12 @@
                                     </div>
 
                                 </div>
-                                <div class="detailRow">
+                                <div *ngIf="project.issueType === 'Subtask'" class="detailRow">
                                     <div class="detailLeft">Parent Task : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-external-link"
                                             style="margin-right: 10px;"></i>
-                                        <a href="{{project.parentTaskLink}}"
-                                            target="_blank">{{project.parentTaskLink}}</a>
+                                        <a [routerLink]="['/project-details', project.parentTaskId]"
+                                            routerLinkActive="['active']">{{project.parentTaskLink}}</a>
                                     </div>
 
                                     <div *ngIf="disableEdit" class="detailRight">
@@ -104,41 +108,91 @@
                                 [style]="{'height':'320px'}"></p-editor>
                         </p-accordionTab>
                         <p-accordionTab header="Attachments">
-                            <p-fileUpload name="demo[]" [customUpload]="true" (uploadHandler)="onUpload($event)"
+                            <div class="detailRow">
+                                <div class="detailLeft">Link to Attachments : </div>
+                                <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-external-link"
+                                        style="margin-right: 10px;"></i>
+                                    <a href="{{project.attachments}}" target="_blank">{{project.attachments}}</a>
+                                </div>
+
+                                <div *ngIf="disableEdit" class="detailRight">
+                                    <input style="width: 50%" type="text" [(ngModel)]="project.attachments" pInputText
+                                        placeholder="URL should start with http://">
+                                </div>
+
+                            </div>
+                            <!-- <p-fileUpload name="demo[]" [customUpload]="true" (uploadHandler)="onUpload($event)"
                                 multiple="multiple" accept="image/*" maxFileSize="1000000">
                                 <ng-template pTemplate="content">
                                     <ul *ngIf="uploadedFiles.length">
                                         <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
                                     </ul>
                                 </ng-template>
-                            </p-fileUpload>
+                            </p-fileUpload> -->
                             <!-- <p-card  *ngFor="let file of filesArr" header="Advanced Card" subheader="Card Subheader">
                                 <ng-template pTemplate="header">
                                     <img *ngIf="file.Url" [src]="file.Url"/>                 
                                 </ng-template>
                             </p-card> -->
-                            <div class="uploadedFile" *ngFor="let file of filesArr">
+                            <!-- <div class="uploadedFile" *ngFor="let file of filesArr">
                                 <p-card>
                                     <p-image [src]="sanitizer.bypassSecurityTrustUrl(file.Url)" alt="Image" height="150"
                                         width="150" [preview]="true"></p-image>
-                                    <!-- <span style="margin-left: 10px;">{{file.FileName}}</span> -->
-                                    <span style="margin-left: 10px;"><b>{{file.FirstName}} , {{ file.LastName }}</b></span>
+                                    <span style="margin-left: 10px;">{{file.FileName}}</span>
+                                    <span style="margin-left: 10px;"><b>{{file.FirstName}} , {{ file.LastName
+                                            }}</b></span>
                                     <span style="margin-left: 10px;"><b>{{file.UploadDateTime}}</b></span>
                                 </p-card>
-                            </div>
+                            </div> -->
                             <!-- <div class="image-preview mb-3" *ngIf="previewUrl">
                                 <img [src]="previewUrl" height="500" width="500"/>                 
                             </div> -->
                         </p-accordionTab>
-                        <p-accordionTab header="Subtasks">
-                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-                                voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint
-                                occaecati
-                                cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi,
-                                id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita
-                                distinctio.
-                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
-                            </p>
+                        <p-accordionTab *ngIf="project.issueType == 'Story'" header="Subtasks">
+                            <p-toolbar styleClass="mb-4">
+                                <ng-template pTemplate="left">
+                                    <button pButton pRipple label="Add Subtask" icon="pi pi-plus"
+                                        class="p-button-success mr-2" (click)="openNew()"></button>
+                                </ng-template>
+                            </p-toolbar>
+                            <p-table #dt [value]="subtasks" [rows]="10"
+                                [globalFilterFields]="['projectName','country.name','representative.name','status']"
+                                responsiveLayout="scroll" [rowHover]="true" dataKey="IDX">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Name
+                                        </th>
+                                        <th>Priority
+                                        </th>
+                                        <th>Status
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-record>
+                                    <tr>
+                                        <td>{{record.projectName}}</td>
+                                        <td>{{record.priority}}</td>
+                                        <td><span
+                                                [class]="'product-badge status-' + (record.status ? record.status.toLowerCase() : '')">{{record.status}}</span>
+                                        </td>
+                                        <td>
+                                            <button pTooltip="Go to the details of this record" tooltipPosition="left"
+                                                pButton pRipple icon="pi pi-pencil"
+                                                class="p-button-rounded p-button-info"
+                                                (click)="getSubtaskDetails(record.IDX)"></button>
+                                            <button pTooltip="Delete this record" tooltipPosition="bottom" pButton
+                                                pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                                (click)="deleteRecord(record)"></button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate=" summary">
+                                    <div class="flex align-items-center justify-content-between">
+                                        In total there are {{subtasks ? subtasks.length : 0 }} records.
+                                    </div>
+                                </ng-template>
+                            </p-table>
                         </p-accordionTab>
                         <p-accordionTab header="Activity">
                             <div class="card">
@@ -173,6 +227,7 @@
                                                     <th>Old Value</th>
                                                     <th>New Value</th>
                                                     <th>Username</th>
+                                                    <th>Updated Date & Time</th>
                                                 </tr>
                                             </ng-template>
                                             <ng-template pTemplate="body" let-record>
@@ -181,6 +236,7 @@
                                                     <td>{{record.oldValue}}</td>
                                                     <td>{{record.newValue}}</td>
                                                     <td>{{record.FirstName + ' ' + record.LastName}}</td>
+                                                    <td>{{record.updatedDateTime}}</td>
                                                 </tr>
                                             </ng-template>
                                         </p-table>
@@ -259,19 +315,18 @@
                                 <div class="detailRow">
                                     <div class="detailLeft">Progress : </div>
                                     <div class="detailRight">
-                                        <div *ngIf="!disableEdit" class="detailRight">
+                                        <div class="detailRight">
                                             <p-progressBar [value]="project.progress"></p-progressBar>
                                         </div>
-                                        <div *ngIf="disableEdit" class="detailRight">
+                                        <!-- <div *ngIf="disableEdit" class="detailRight">
                                             <input type="text" pInputText [(ngModel)]="project.progress" readonly />
                                             <p-slider (onChange)="handleChangeProgress($event)"
                                                 [(ngModel)]="project.progress"></p-slider>
 
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
-                            <!-- .p-progressbar .p-progressbar-value -->
                         </p-accordionTab>
                     </p-accordion>
                 </div>
@@ -282,6 +337,116 @@
 </div>
 
 
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Create a subtask" [modal]="true"
+    styleClass="p-fluid" [breakpoints]="{'960px': '75vw'}">
+    <ng-template pTemplate="content">
+        <form class="form-horizontal" [formGroup]="form">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="parentTaskId" class="control-label">Parent Task ID</label>
+                    <input type="number" id="parentTaskId" class="form-control" formControlName="parentTaskId" required
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="PRM" class="control-label">PRM</label>
+                    <input type="number" id="PRM" class="form-control" formControlName="PRM" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="projectName" class="control-label">Project Name</label>
+                    <input autocomplete="off" type="text" id="projectName" class="form-control"
+                        formControlName="projectName" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="issueType" class="control-label">Issue Type</label>
+                    <select class="form-control" formControlName="issueType">
+                        <option [ngValue]="issueType" selected disabled>Select Issue Type</option>
+                        <option *ngFor="let issueType of projectTypes" [ngValue]="issueType"
+                            disabled="issueType !== Subtask">{{issueType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="priority" class="control-label">Priority</label>
+                    <select class="form-control" formControlName="priority">
+                        <option [ngValue]="null" disabled>Select Priority</option>
+                        <option *ngFor="let priority of priorityTypes" [ngValue]="priority">{{priority}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="region" class="control-label">Region</label>
+                    <input autocomplete="off" type="text" id="region" class="form-control" formControlName="region"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="projectManager" class="control-label">Project Manager</label>
+                    <input autocomplete="off" type="text" id="projectManager" class="form-control"
+                        formControlName="projectManager" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="status" class="control-label">Status</label>
+                    <select (change)="statusChangeHandler($event.target, true)" class="form-control" formControlName="status">
+                        <option [ngValue]="null" disabled>Select Status</option>
+                        <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="estimatedHours" class="control-label">Estimated Hours</label>
+                    <input autocomplete="off" type="number" id="estimatedHours" class="form-control"
+                        formControlName="estimatedHours" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="startDate" class="control-label">Assigned Date</label>
+                    <input autocomplete="off" type="date" id="startDate" class="form-control"
+                        formControlName="startDate" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="goLive" class="control-label">Go Live Date</label>
+                    <input autocomplete="off" type="date" id="goLive" class="form-control" formControlName="goLive"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="progress" class="control-label">Progress %</label>
+                    <input autocomplete="off" type="number" id="progress" class="form-control" max="100" min="0"
+                        formControlName="progress" required disabled>
+                </div>
+            </div>
+
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="closeDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="!form.valid" class="p-button-text"
+            (click)="createProject()"></button>
+    </ng-template>
+</p-dialog>
+
+
 <div class="rightContainer">
 
 </div>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+<router-outlet></router-outlet>

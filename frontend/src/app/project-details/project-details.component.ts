@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MenuItem } from 'primeng/api';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { DashboardComponent } from '../dashboard/dashboard.component';
 import { DataserviceService } from '../dataservice.service';
 import { Comments } from '../models/comments';
 import { HistoryObject } from '../models/history';
@@ -18,8 +21,14 @@ export class ProjectDetailsComponent implements OnInit {
   updatedDescription: any;
   previewUrl: any;
   filesArr: any[];
+  paramId: any;
+  submitted: boolean;
+  productDialog: boolean;
+  record: {};
+  data: any;
+  subtasks: any;
 
-  constructor(private dataservice: DataserviceService, private sanitizer:DomSanitizer) { }
+  constructor(private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
   dashboard: MenuItem;
   project: NodeData;
@@ -42,9 +51,18 @@ export class ProjectDetailsComponent implements OnInit {
   allUsers: any;
   userObject = {} as USERMANAGEMENT;
   uploadedFiles: any[] = [];
+  form: FormGroup;
   ngOnInit(): void {
-    this.getSelectedProject();
-    this.getUserObj();
+    this.activatedRoute.params.subscribe((params) => {
+      this.paramId = params['id']
+      this.getProjectDetails(this.paramId);
+      this.getSelectedProject();
+      this.getUserObj();
+      this.getHistory();
+      this.getSubtasks();
+      this.getProgress()
+    })
+
     this.disableEdit = false;
     this.items = [
       {
@@ -110,17 +128,83 @@ export class ProjectDetailsComponent implements OnInit {
       if (a.toLowerCase() > b.toLowerCase()) return 1
       return 0
     })
-    // this.getAttachments();
+    this.form = this.formBuilder.group({
+      PRM: [null, Validators.required],
+      projectName: [null, Validators.required],
+      issueType: [null, Validators.required],
+      priority: [null, Validators.required],
+      region: [null, Validators.required],
+      projectManager: [null, Validators.required],
+      status: [null, Validators.required],
+      estimatedHours: [null, Validators.required],
+      startDate: [null, Validators.required],
+      goLive: [null, Validators.required],
+      progress: [null, Validators.required],
+      parentTaskId: new FormControl({ disabled: true }, Validators.required),
+    });
+    this.form.get("parentTaskId").setValue(this.project.IDX);
+    this.form.get("issueType").setValue('Subtask');
+  }
+
+  getSubtasks() {
+    this.dataservice.getSubtasks(this.paramId).subscribe((res) => {
+      this.subtasks = res;
+    })
+  }
+
+  openNew() {
+    this.record = {};
+    this.submitted = false;
+    this.productDialog = true;
+    this.form.get("parentTaskId").setValue(this.project.IDX);
+    this.form.get("issueType").setValue('Subtask');
+  }
+
+  closeDialog() {
+    this.productDialog = false;
+  }
+
+  createProject() {
+    this.dataservice.createRecord(this.form.value).subscribe((res) => {
+      this.productDialog = false;
+      this.form.reset();
+      this.form.get("parentTaskId").setValue(this.project.IDX);
+      this.form.get("issueType").setValue('Subtask');
+      this.subtasks = res.filter((a) => {
+        return a.parentTaskId == this.project.IDX;
+      });
+      this.project = res.filter((a) => {
+        return a.IDX == this.project.IDX;
+      })[0];
+    })
+  }
+
+
+  getProjectDetails(id) {
+    this.dataservice.getProjectDetails(id).subscribe((res) => {
+      this.dataservice.setselectedProject(res[0]);
+      this.project = res[0]
+    }, (error) => {
+      console.log(error)
+    })
+  }
+
+  getSubtaskDetails(id) {
+    this.dataservice.getProjectDetails(id).subscribe((res) => {
+      this.dataservice.setselectedProject(res[0]);
+      this.router.navigate([`project-details/${id}`])
+    }, (error) => {
+      console.log(error)
+    })
   }
 
 
   getSelectedProject() {
-    let proj = { "IDX": 206, "PRM": 4, "projectName": "Creatiuuuuuuuuuu APIs for adding users", "issueType": "subtask", "priority": "Lowest", "status": "In Progress", "assignee": "Kashi", "reporter": "Pratik", "description": "Description BSL-MC-ED-01-MNTR", "attachments": null, "startDate": "1998-01-23T12:45:56.000Z", "estimatedHours": "16", "parentTaskLink": "https://www.google.com", "comments": "Comments - Philips TS Support", "history": "History", "subTasks": "subtask links", "projectManager": "Proj Manager", "health": "Health - Risky", "region": "Region - TX", "goLive": "go live dt", "checklist": "checklist", "LastModifiedUser": null, "LastModifiedDateTime": null }
+    // let proj = { "IDX": 206, "PRM": 4, "projectName": "Creatasasaiuuuuuuuuuu APIs for adding users", "issueType": "subtask", "priority": "Lowest", "status": "In Progress", "assignee": "Kashi", "reporter": "Pratik", "description": "Description BSL-MC-ED-01-MNTR", "attachments": null, "startDate": "1998-01-23T12:45:56.000Z", "estimatedHours": "16", "parentTaskLink": "https://www.google.com", "comments": "Comments - Philips TS Support", "history": "History", "subTasks": "subtask links", "projectManager": "Proj Manager", "health": "Health - Risky", "region": "Region - TX", "goLive": "go live dt", "checklist": "checklist", "LastModifiedUser": null, "LastModifiedDateTime": null }
     this.dataservice.selectedProject.subscribe((project) => {
-      this.project = project || proj
+      this.project = project;
     })
     this.dataservice.allUsers.subscribe((res) => {
-      console.log(res)
       this.allUsers = res.map((a) => {
         return a.FirstName + ' ' + a.LastName
       });
@@ -136,7 +220,7 @@ export class ProjectDetailsComponent implements OnInit {
 
 
   getComments(project) {
-    this.dataservice.getComments(project.IDX).subscribe((data: Comments[]) => {
+    this.dataservice.getComments(this.paramId).subscribe((data: Comments[]) => {
       this.comments = data.map((a) => {
         a.CommentDateTime = new Date(a.CommentDateTime).toLocaleString("en", {
           weekday: "short",
@@ -168,28 +252,39 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   saveDetails() {
-    this.project.attachments = null;
     this.dataservice.updateProject(this.project).subscribe((res) => {
-      console.log(res)
       this.disableEdit = false;
       this.applyStyles();
       this.oldObj = JSON.parse(window.localStorage.getItem('oldData'));
+      let historyObj = {} as HistoryObject;
       for (let key in this.oldObj) {
-        let historyObj = {} as HistoryObject;
         if (this.oldObj[key] !== this.project[key]) {
           historyObj.fieldName = key;
-          historyObj.oldValue = this.oldObj[key];
+          historyObj.oldValue = this.oldObj[key] || "";
           historyObj.newValue = key === 'description' ? this.updatedDescription : this.project[key];
           historyObj.IDX = this.project.IDX;
           historyObj.UserID = this.userObject.UserID;
           historyObj.FirstName = this.userObject.FirstName;
           historyObj.LastName = this.userObject.LastName;
           historyObj.PRM = this.project.PRM;
+          historyObj.updatedDateTime = new Date().toLocaleString("en", {
+            weekday: "short",
+            year: "numeric",
+            month: "2-digit",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            timeZoneName: "long"
+          })
           this.historyArr.push(historyObj)
+          this.dataservice.saveHistory(historyObj).subscribe((dt) => {
+            this.historyArr = dt;  // performance issue; TBD. as multiple calls
+          })
         }
       }
-      console.log(this.historyArr)
       window.localStorage.setItem('newData', JSON.stringify(this.project));
+
     })
 
   }
@@ -240,61 +335,64 @@ export class ProjectDetailsComponent implements OnInit {
 
     // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
   }
-  
+
 
   onUpload(ev) {
     let formData = new FormData();
-    formData.append("fileRect", ev.files[0]);
+    formData.append("file", ev.files[0], ev.files[0].name);
+    formData.set("file", ev.files[0], ev.files[0].name);
+
     var object = {};
-    formData.forEach((value, key) => object[key] = value);
     this.filesArr = [];
     let files = ev.files;
-    for (let i = 0; i < files.length; i++) {
-      let file = {};
-      file['url'] = files[i].objectURL.changingThisBreaksApplicationSecurity;
-      file['name'] = files[i].name;
-      file['IDX'] = this.project.IDX;
-      file['UserID'] = this.userObject?.UserID || "";
-      file['FirstName'] = this.userObject?.FirstName || "";
-      file['LastName'] = this.userObject?.LastName || "";
-      file['PRM'] = this.project.PRM;
-      file['FileSize'] = files[i].size;
-      file['UploadDateTime'] =  new Date().toLocaleString("en", {
-        weekday: "short",
-        year: "numeric",
-        month: "2-digit",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        timeZoneName: "long"
-      })
-     
-      this.dataservice.upload(file).subscribe((dt) => {
-        console.log(dt)
-        // dt.map((a)=>{
-        //   a.Url = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(new Blob(a.Url, {type: "application/zip"})));
-        // });
-        this.filesArr = dt;
-        // let url = JSON.parse(dt[1].attachments).file.url
-        // this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(url);
-        // var link = document.createElement("a");
-        // link.download = "name";
-        // link.href = url;
-        // document.body.appendChild(link);
-        // // link.click();
-        // document.body.removeChild(link);
-        // // delete link;
-        // let sanitizedUrl = this.sanitizer.bypassSecurityTrustUrl(url)
-      })
-    }
-    
+
+    this.dataservice.upload(formData)
+
   }
 
   getAttachments() {
     this.dataservice.getAttachments(this.project.IDX).subscribe((files) => {
       this.filesArr = files
     })
+  }
+
+  getHistory() {
+    this.dataservice.getHistory(this.paramId).subscribe((res) => {
+      this.historyArr = res;
+    })
+  }
+
+  deleteRecord(record) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete ' + record.projectName + '?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.dataservice.deleteRecord(record).subscribe((data) => {
+          this.subtasks = this.subtasks.filter(val => val.IDX !== record.IDX);
+        })
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Record Deleted', life: 3000 });
+      }
+    });
+  }
+
+  getProgress() {
+    if (this.project && this.project.issueType !== 'Story') {
+      this.project.progress = this.project.status === 'In Progress' ? 20 : this.project.status === 'In Review' ? 40 : this.project.status === 'In Test Env' ? 60 : this.project.status === 'QA Passed' ? 80 : this.project.status === 'In Production' ? 90 : this.project.status === 'Done' ? 100 : 0;
+    }
+  }
+
+  statusChangeHandler(e, popup) {
+    if (popup) {
+      let progress = e.value.endsWith('In Progress') ? 20 : e.value.endsWith('In Review') ? 40 : e.value.endsWith('In Test Env') ? 60 : e.value.endsWith('QA Passed') ? 80 : e.value.endsWith('In Production') ? 90 : e.value.endsWith('Done') ? 100 : 0;
+      this.form.get("progress").setValue(progress);
+    } else {
+      this.project.progress = e.value === 'In Progress' ? 20 : e.value === 'In Review' ? 40 : e.value === 'In Test Env' ? 60 : e.value === 'QA Passed' ? 80 : e.value === 'In Production' ? 90 : e.value === 'Done' ? 100 : 0;
+    }
+  }
+
+  cancelHandler() {
+    this.disableEdit = !this.disableEdit;
   }
 
 
