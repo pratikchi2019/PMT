@@ -58,7 +58,7 @@
                     <p-tableCheckbox [value]="record"></p-tableCheckbox>
                 </td> -->
                 <td>
-                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton pRipple icon="pi pi-list"
+                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton pRipple icon="pi pi-plus"
                     class="p-button-rounded p-button-help" (click)="show(record)"></button>
                 </td>
                 <td style="width: 4%;">{{record.PRM}}</td>
