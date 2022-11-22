@@ -49,6 +49,7 @@ import { AppConfigService } from './appconfigservice.service';
 import { CardModule } from 'primeng/card';
 import { SubtaskComponent } from './subtask/subtask.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { DatatableComponent } from './datatable/datatable.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,7 +58,8 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
     ProjectDetailsComponent,
     UserManagementComponent,
     StatsComponent,
-    SubtaskComponent
+    SubtaskComponent,
+    DatatableComponent,
   ],
   entryComponents: [
     SubtaskComponent
@@ -106,7 +108,8 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
     ImageModule,
     ChartModule,
     CardModule,
-    DynamicDialogModule
+    DynamicDialogModule,
+    ToolbarModule,
   ],
   providers: [DataserviceService, MessageService, ConfirmationService, FormBuilder, AppConfigService, DialogService],
   bootstrap: [AppComponent]

@@ -57,7 +57,10 @@
                 <!-- <td>
                     <p-tableCheckbox [value]="record"></p-tableCheckbox>
                 </td> -->
-                <td></td>
+                <td>
+                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton pRipple icon="pi pi-list"
+                    class="p-button-rounded p-button-help" (click)="show(record)"></button>
+                </td>
                 <td style="width: 4%;">{{record.PRM}}</td>
                 <td>{{record.projectName}}</td>
                 <td>{{record.priority}}</td>
@@ -79,8 +82,7 @@
                         (click)="getProjectDetails(record.IDX)"></button>
                     <button pTooltip="Delete this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-trash"
                         class="p-button-rounded p-button-danger" (click)="deleteRecord(record)"></button>
-                    <button pTooltip="View Subtasks" tooltipPosition="bottom" pButton pRipple icon="pi pi-list"
-                        class="p-button-rounded p-button-help" (click)="show(record)"></button>
+                   
                 </td>
             </tr>
         </ng-template>
@@ -138,8 +140,10 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="projectManager" class="control-label">Project Manager</label>
-                    <input autocomplete="off" type="text" id="projectManager" class="form-control"
-                        formControlName="projectManager" required>
+                    <select class="form-control" formControlName="projectManager">
+                        <option [ngValue]="null" disabled>Select Project Manager</option>
+                        <option *ngFor="let projectManager of projectManagers" [ngValue]="projectManager">{{projectManager}}</option>
+                    </select>
                 </div>
             </div>
             <div class="form-group">

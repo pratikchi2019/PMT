@@ -1,5 +1,4 @@
 var Db = require('./dboperations');
-// var FHS = require('./fhs');
 const dboperations = require('./dboperations');
 
 var express = require('express');
@@ -10,18 +9,8 @@ var app = express();
 var router = express.Router();
 var upload = multer();
 app.use(upload.array());
-// // parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded())
-
-// // parse application/json
-// app.use(bodyParser.json())
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
-
-// app.use(bodyParser.text({ type: "text/plain" }));
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
-// app.use(express.text());
 app.use(cors());
 
 app.use('/api', router);
@@ -60,6 +49,12 @@ app.post('/api/upload', multipartMiddleware, (req, res) => {
 
 router.route('/data').get((request, response) => {
     dboperations.getAllData().then(result => {
+        response.json(result[0]);
+    })
+})
+
+router.route('/dataInventory').get((request, response) => {
+    dboperations.getAllDataInventory().then(result => {
         response.json(result[0]);
     })
 })

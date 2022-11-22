@@ -6,14 +6,30 @@ const crypto = require("crypto");
 
 const conn = new sql1.ConnectionPool({
     database: "ProjectMgmtTool",
-    server: "WKWIN0410329",
+    server: "LAPTOP-1FETMONQ\\MSSQLSERVER01",
     driver: "msnodesqlv8",
     options: {
         trustedConnection: true
     }
 });
 conn.connect().then(() => {
-    console.log("connected")
+    console.log("PMT DB connected")
+}).catch((e)=> {
+    console.log(e,"Error =======================================")
+});
+
+const conn2 = new sql1.ConnectionPool({
+    database: "EpicBMDI",
+    server: "LAPTOP-1FETMONQ\\MSSQLSERVER01",
+    driver: "msnodesqlv8",
+    options: {
+        trustedConnection: true
+    }
+});
+conn2.connect().then(() => {
+    console.log("Inventory DB connected")
+}).catch((e)=> {
+    console.log(e,"Error =======================================")
 });
 
 function get(keys, value) {
@@ -39,9 +55,20 @@ async function getAllData() {
         console.log(error);
     }
 }
+
+async function getAllDataInventory() {
+    try {
+        let pool = await conn2.connect(config);
+        let products = await pool.request()
+            .query(`SELECT * from MDIDetails Order by Hospital ASC`);
+        return products.recordsets;
+    } catch (error) {
+        console.log(error);
+    }
+}
 async function getAllRegions() {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let products = await pool.request()
             .query(`SELECT Region from MDIDetails Order by Region ASC`);
         return products.recordsets;
@@ -63,7 +90,7 @@ async function getAllUsers() {
 
 async function getDataByEMR(EMR) {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let products = await pool.request()
             .input('input_parameter', sql.NVarChar, EMR)
             .query(`SELECT * from MDIDetails where EMR = @input_parameter`);
@@ -75,7 +102,7 @@ async function getDataByEMR(EMR) {
 
 async function getRegionData(regionName) {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let products = await pool.request()
             // .input('input_parameter1', sql.NVarChar, selectedEMR)
             .input('input_parameter2', sql.NVarChar, regionName)
@@ -88,7 +115,7 @@ async function getRegionData(regionName) {
 
 async function getHospitalData(selectedRegion, state, hospitalName) {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let product = await pool.request()
             .input('input_parameter1', sql.NVarChar, state)
             .input('input_parameter2', sql.NVarChar, hospitalName)
@@ -103,7 +130,7 @@ async function getHospitalData(selectedRegion, state, hospitalName) {
 
 async function getStateData(selectedRegion, state) {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let product = await pool.request()
             //.input('input_parameter1', sql.NVarChar, emr)
             .input('input_parameter2', sql.NVarChar, state)
@@ -118,7 +145,7 @@ async function getStateData(selectedRegion, state) {
 
 async function getDepartmentData(selectedRegion, state, hospitalName, department) {
     try {
-        let pool = await conn.connect(config);
+        let pool = await conn2.connect(config);
         let product = await pool.request()
             .input('input_parameter', sql.NVarChar, hospitalName)
             .input('input_parameter1', sql.NVarChar, department)
@@ -531,6 +558,7 @@ module.exports = {
     getDepartmentData: getDepartmentData,
     getRegionData: getRegionData,
     getAllData: getAllData,
+    getAllDataInventory: getAllDataInventory,
     updateData: updateData,
     login: login,
     getDataByEMR,

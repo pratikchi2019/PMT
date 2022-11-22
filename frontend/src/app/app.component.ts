@@ -48,4 +48,12 @@ export class AppComponent {
       this.router.navigate(['login'])
     });
   }
+
+  handleChange(e) {
+    if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "Inventory Portal") {
+      this.router.navigate(['inventory'])
+    } else if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "Project Management Tool") {
+      this.router.navigate(['dashboard'])
+    }
+  }
 }

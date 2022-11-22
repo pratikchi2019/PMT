@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit {
   statusTypes: string[];
 
   progress: any;
+  projectManagers: any;
 
   constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
@@ -79,9 +80,6 @@ export class DashboardComponent implements OnInit {
     this.dataservice.getAllData().subscribe((res) => {
       this.data = res;
       this.getAllUsers();
-      // this.data.map((x)=> {
-      //   x.subTasks = 
-      // })
     })
   }
 
@@ -117,7 +115,9 @@ export class DashboardComponent implements OnInit {
   getAllUsers() {
     this.dataservice.getAllUsers().subscribe((res) => {
       this.dataservice.allUsers.next(res);
-      console.log(res)
+      this.projectManagers = res.map((x) => {
+        return x.FirstName + ' ' + x.LastName
+      })
     })
   }
 

@@ -1,13 +1,13 @@
 const config = {
-    user :'CHI\BridgesBMDISA',
+    user :'LAPTOP-1FETMONQ\MSSQLSERVER01',
     password :'Welcome@123',
-    server:'RDCQUONAPP001',
+    server:'LAPTOP-1FETMONQ\MSSQLSERVER01',
     database:'EpicBMDI',
     options:{
-        trustedconnection: false,
+        trustedconnection: true,
         enableArithAbort : true,
         trustServerCertificate: true,
-        instancename :'RDCQUONAPP001'
+        instancename :'LAPTOP-1FETMONQ\MSSQLSERVER01'
     },
     port : 1433
 }

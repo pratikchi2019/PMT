@@ -1,0 +1,44 @@
+:host ::ng-deep .p-dropdown {
+    width: 14rem;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+:host ::ng-deep .p-button {
+    margin-right: .5rem;
+}
+
+.p-button-removefilter {
+    position: absolute;
+}
+
+:host ::ng-deep .p-buttonset {
+    .p-button {
+        margin-right: 0;
+    }
+}
+
+.details {
+    display: flex;
+}
+
+h5,
+h6 {
+    margin: 0;
+}
+
+:host ::ng-deep .details {
+    display: block;
+    /* word-break: break-word; */
+    white-space: break-spaces;
+}
+
+:host ::ng-deep .regionWarning {
+    display: flex;
+    justify-content: center;
+    color: red;
+}
+
+:host ::ng-deep td {
+    word-break: break-word;
+}

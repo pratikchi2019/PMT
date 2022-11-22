@@ -79,6 +79,10 @@ export class DataserviceService {
     return this.http.get<any>(this.baseURL + "/data")
   }
 
+  getAllDataInventory() {
+    return this.http.get<any>(this.baseURL+"/dataInventory")
+  }
+
   getProjectDetails(projectId) {
     return this.http.post<any>(this.baseURL + '/projectDetails', { projectId })
   }
@@ -119,6 +123,20 @@ export class DataserviceService {
 
     );
   }
+
+  createRecordInventory(record) {
+    return this.http.post<any>(this.baseURL+"/createInventory", record).pipe(
+
+      retry(1),
+
+      catchError(this.handleError)
+
+    );
+  }
+  updateRecord(record) {
+    return this.http.put<any>(this.baseURL+"/updateInventory", { record })
+  }
+
   updateProject(project: any) {
     return this.http.put<any>(this.baseURL + "/update", { project })
   }
@@ -128,6 +146,13 @@ export class DataserviceService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }), body: record
     };
     return this.http.delete<any>(this.baseURL + "/delete", httpOptions)
+  }
+
+  deleteRecordInventory(record) {
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }), body: record
+    };
+    return this.http.delete<any>(this.baseURL+"/deleteInventory", httpOptions)
   }
 
   getComments(idx: any) {
@@ -200,19 +225,6 @@ export class DataserviceService {
     );
   }
 
-  // upload(files) {
-  //   const httpOptions = {
-  //     headers: new HttpHeaders().delete('Content-Type')
-  //   };
-  //   return this.http.post<any>(this.baseURL + "/upload", { files }).pipe(
-
-  //     retry(1),
-
-  //     catchError(this.handleError)
-
-  //   );
-  // }
-
   upload(file) {
 
     let req = new XMLHttpRequest();
@@ -224,47 +236,6 @@ export class DataserviceService {
     for (var value of file.values()) {
       console.log(value);
    }
-
-    // return this.http.post(this.baseURL + '/upload', file)
-    // const httpOptions = {
-    //   headers: new HttpHeaders({ 'Content-Type': 'application/json' }), body: file
-    // };
-    // const headers = new HttpHeaders();
-    // headers.append('Content-Type', 'multipart/form-data');
-    // headers.append('Accept', 'application/json');
-    // return this.http.post<any>(this.baseURL + "/upload", { file }).pipe(
-
-    //   retry(1),
-
-    //   catchError(this.handleError)
-
-    // );
-    // return new Observable(function (observer) {
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.open('POST', `http://localhost:8085/api/upload`);
-    //   // xhr.setRequestHeader('X-PINGOTHER', 'pingpong');
-    //   xhr.setRequestHeader('Content-Type', 'application/xml');
-    //   // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    //   xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-    //   xhr.setRequestHeader('Accept', 'application/json');
-    //   xhr.onreadystatechange = function () {
-    //     if (xhr.readyState == 4) {
-    //       if (xhr.status == 200) {
-    //         var data = xhr.responseText;
-    //         // observer.next(data);
-
-    //       }
-    //     }
-    //   };
-    //   xhr.addEventListener("progress", function (evt) {
-    //     //Do some progress calculations
-    //     observer.next(xhr.responseText);
-    //     observer.complete();
-    //   }, false);
-    //   // observer.next(xhr);
-    //   xhr.send(formData);
-    //   return xhr.response;
-    // })
   }
 
   getAttachments(projectId) {

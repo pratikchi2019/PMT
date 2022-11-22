@@ -3,38 +3,69 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<nav class="navbar navbar-inverse" *ngIf="(dataservice.authenticated$ | async) === true">
-    <div class="container-fluid">
-        <!-- <div class="nav navbar-nav navbar-header">
-            <a routerLink="/" routerLinkActive="active" class="navbar-brand" href="#">PMT</a>
-        </div>
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
-            <li><a routerLink="/login" routerLinkActive="active">Home</a></li>
-            <li><a routerLink="/inventory" routerLinkActive="active">MDI Data</a></li>
-        </ul> -->
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav active">
-            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/dashboard" routerLinkActive="['active']">Dashboard</a></li>
-        </ul> 
-
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
-            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/usermanagement" routerLinkActive="['active']">User Management</a></li>
-        </ul> 
-
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
-            <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/stats" routerLinkActive="['active']">Statistics</a></li>
-        </ul> 
-
-        <ul *ngIf="(dataservice.authenticated$ | async) === false" class="nav navbar-nav navbar-right">
-            <!-- <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
-            <li><a routerLink="/login" routerLinkActive="active"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        </ul>
+<p-tabView (onChange)="handleChange($event)">
+    <p-tabPanel id="pmt" header="Project Management Tool">
+        <nav class="navbar navbar-inverse" *ngIf="(dataservice.authenticated$ | async) === true">
+            <div class="container-fluid">
+                <!-- <div class="nav navbar-nav navbar-header">
+                    <a routerLink="/" routerLinkActive="active" class="navbar-brand" href="#">PMT</a>
+                </div>
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li><a routerLink="/login" routerLinkActive="active">Home</a></li>
+                    <li><a routerLink="/inventory" routerLinkActive="active">MDI Data</a></li>
+                </ul> -->
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav active">
+                    <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/dashboard" routerLinkActive="['active']">Dashboard</a></li>
+                </ul> 
         
-        <!-- https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform -->
-        <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav navbar-right">
-            <!-- <li><a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform"><span class="glyphicon glyphicon-list-alt"></span>Change Request</a></li> -->
-            <li (click)="logout()"><a routerLink="/logout" routerLinkActive="active"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-        </ul>
-    </div>
-</nav>
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/usermanagement" routerLinkActive="['active']">User Management</a></li>
+                </ul> 
+        
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/stats" routerLinkActive="['active']">Statistics</a></li>
+                </ul> 
+        
+                <ul *ngIf="(dataservice.authenticated$ | async) === false" class="nav navbar-nav navbar-right">
+                    <!-- <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
+                    <li><a routerLink="/login" routerLinkActive="active"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+                
+                <!-- https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform -->
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav navbar-right">
+                    <!-- <li><a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform"><span class="glyphicon glyphicon-list-alt"></span>Change Request</a></li> -->
+                    <li (click)="logout()"><a routerLink="/logout" routerLinkActive="active"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+    </p-tabPanel>
+    <p-tabPanel id="inventory" header="Inventory Portal">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a  routerLink="/inventory" routerLinkActive="active">MDI Data</a></li>
+                </ul>
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/usermanagement" routerLinkActive="active">User Management</a></li>
+                </ul>
+        
+                <ul *ngIf="(dataservice.authenticated$ | async) === false" class="nav navbar-nav navbar-right">
+                    <li  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/login" routerLinkActive="active"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+                
+                <!-- https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform -->
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav navbar-right">
+                    <li><a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdd-EWgbJJvwF1rx-C_bxc9gXEWAesxhb2Aj-iLYIW9X4WEGA/viewform"><span class="glyphicon glyphicon-list-alt"></span>Change Request</a></li>
+                    <li (click)="logout()"><a routerLink="/logout" routerLinkActive="active"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+    </p-tabPanel>
+</p-tabView>
 
 <router-outlet></router-outlet>
+<router-outlet name="outlet1"></router-outlet>
+<!-- <router-outlet *ngIf="(dataservice.authenticated$ | async) === false"></router-outlet> -->
+
+
