@@ -44,6 +44,17 @@
 
                                 </div>
                                 <div class="detailRow">
+                                    <div class="detailLeft">hoursInPRM : </div>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-bookmark"
+                                            style="margin-right: 5px;"></i>
+                                        {{project.hoursInPRM}}</div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <p-dropdown [options]="hoursInPRMs" [(ngModel)]="project.hoursInPRM"
+                                            placeholder="Select a value" [showClear]="true"></p-dropdown>
+                                    </div>
+
+                                </div>
+                                <div class="detailRow">
                                     <div class="detailLeft">Status : </div>
                                     <div *ngIf="!disableEdit" class="detailRight">
                                         <p-button class="statusBtn" label="{{project.status}}"
@@ -62,6 +73,17 @@
                                     <div *ngIf="disableEdit" class="detailRight">
                                         <p-dropdown [options]="priorityTypes" [(ngModel)]="project.priority"
                                             placeholder="Select a priority" [showClear]="true"></p-dropdown>
+                                    </div>
+
+                                </div>
+                                <div class="detailRow">
+                                    <div class="detailLeft">Market Priority : </div>
+                                    <div *ngIf="!disableEdit" class="detailRight"><i [class]="priorityIconClass"
+                                            style="margin-right: 5px;"></i>
+                                        {{project.marketPriority}}</div>
+                                    <div *ngIf="disableEdit" class="detailRight">
+                                        <input style="width: 50%" type="text" [(ngModel)]="project.marketPriority" pInputText
+                                        placeholder="Market Priority">
                                     </div>
 
                                 </div>
@@ -361,7 +383,16 @@
                         formControlName="projectName" required>
                 </div>
             </div>
-
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="hoursInPRM" class="control-label">Hours in PRM</label>
+                    <select class="form-control" formControlName="hoursInPRM">
+                        <option [ngValue]="null" disabled>Select Hours in PRM</option>
+                        <option  *ngFor="let hoursInPRM of hoursInPRMs"
+                            [ngValue]="hoursInPRM">{{hoursInPRM}}</option>
+                    </select>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="issueType" class="control-label">Issue Type</label>
@@ -379,6 +410,13 @@
                         <option [ngValue]="null" disabled>Select Priority</option>
                         <option *ngFor="let priority of priorityTypes" [ngValue]="priority">{{priority}}</option>
                     </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="marketPriority" class="control-label">Market Priority</label>
+                    <input autocomplete="off" type="text" id="marketPriority" class="form-control" formControlName="marketPriority"
+                        required>
                 </div>
             </div>
             <div class="form-group">

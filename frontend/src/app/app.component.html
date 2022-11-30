@@ -4,7 +4,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <p-tabView (onChange)="handleChange($event)">
-    <p-tabPanel id="pmt" header="Project Management Tool">
+    <p-tabPanel id="pmt" header="Project Management">
         <nav class="navbar navbar-inverse" *ngIf="(dataservice.authenticated$ | async) === true">
             <div class="container-fluid">
                 <!-- <div class="nav navbar-nav navbar-header">

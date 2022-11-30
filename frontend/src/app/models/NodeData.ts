@@ -2,8 +2,10 @@ export interface NodeData {
     IDX?: number;
     PRM?: number,
     projectName?: string,
+    hoursInPRM?: string,
     issueType?: string,
     priority?: string,
+    marketPriority?: string,
     status?: string,
     assignee?: string,
     reporter?: string,

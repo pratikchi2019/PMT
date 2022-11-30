@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
 
   progress: any;
   projectManagers: any;
+  hoursInPRMs: any[];
 
   constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
@@ -43,8 +44,10 @@ export class DashboardComponent implements OnInit {
     this.form = this.formBuilder.group({
       PRM: [null, Validators.required],
       projectName: [null, Validators.required],
+      hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
+      marketPriority: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],
@@ -59,7 +62,11 @@ export class DashboardComponent implements OnInit {
       'Story',
       'Bug',
       'Change Request'
-    ]
+    ],
+    this.hoursInPRMs = [
+      'True',
+      'False'
+    ],
     this.statusTypes = [
       "Done", "In Progress", "In Review", "Abandoned", "Blocked", "In Test Env", "QA Passed", "In Production"
     ].sort((a, b) => {

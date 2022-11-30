@@ -27,6 +27,7 @@ export class ProjectDetailsComponent implements OnInit {
   record: {};
   data: any;
   subtasks: any;
+  hoursInPRMs: string[];
 
   constructor(private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
@@ -79,7 +80,6 @@ export class ProjectDetailsComponent implements OnInit {
         badgeColor: this.project.status === 'In Progress' ? 'p-button-warning' : this.project.status === 'Done' ? 'p-button-success'
           : (this.project.status === 'Blocked' || this.project.status === 'Abandoned') ? 'p-button-danger' : 'p-button-primary'
       },
-
       {
         label: 'Priority',
         icon: this.project.priority === 'Lowest' ? 'fa fa-angle-double-down' : this.project.priority === 'Low' ? 'fa fa-angle-down' : this.project.priority === 'Medium' ? 'fa fa-bars'
@@ -111,7 +111,10 @@ export class ProjectDetailsComponent implements OnInit {
       'Bug',
       'Change Request'
     ]
-
+    this.hoursInPRMs = [
+      'True',
+      'False'
+    ];
     this.applyStyles();
     this.statusTypes = [
       "Done", "In Progress", "In Review", "Abandoned", "Blocked", "In Test Env", "QA Passed", "In Production"
@@ -131,8 +134,10 @@ export class ProjectDetailsComponent implements OnInit {
     this.form = this.formBuilder.group({
       PRM: [null, Validators.required],
       projectName: [null, Validators.required],
+      hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
+      marketPriority: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],

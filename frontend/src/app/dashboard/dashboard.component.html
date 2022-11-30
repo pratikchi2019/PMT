@@ -9,8 +9,8 @@
     </p-toolbar>
 
     <p-table #dt [value]="data" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[5,10,25]" [paginator]="true"
-        [globalFilterFields]="['projectName','PRM','priority','status', 'region', 'health', 'projectManager', 'estimatedHours', 'startDate', 'goLive']" responsiveLayout="scroll"
-        [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX"
+        [globalFilterFields]="['projectName','PRM','priority', 'marketPriority', 'status', 'region', 'health', 'projectManager', 'estimatedHours', 'startDate', 'goLive']"
+        responsiveLayout="scroll" [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
         <ng-template pTemplate="caption">
             <div class="flex align-items-center justify-content-between">
@@ -32,7 +32,11 @@
                 </th>
                 <th pSortableColumn="projectName">Name <p-sortIcon field="projectName"></p-sortIcon>
                 </th>
+                <th pSortableColumn="hoursInPRM">Hrs in PRM <p-sortIcon field="hoursInPRM"></p-sortIcon>
+                </th>
                 <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon>
+                </th>
+                <th pSortableColumn="marketPriority">Market Priority <p-sortIcon field="marketPriority"></p-sortIcon>
                 </th>
                 <th pSortableColumn="region">Region <p-sortIcon field="region"></p-sortIcon>
                 </th>
@@ -58,12 +62,15 @@
                     <p-tableCheckbox [value]="record"></p-tableCheckbox>
                 </td> -->
                 <td>
-                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton pRipple icon="pi pi-plus"
-                    class="p-button-rounded p-button-help" (click)="show(record)"></button>
+                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton
+                        pRipple icon="pi pi-plus" class="p-button-rounded p-button-help"
+                        (click)="show(record)"></button>
                 </td>
                 <td style="width: 4%;">{{record.PRM}}</td>
                 <td>{{record.projectName}}</td>
+                <td>{{record.hoursInPRM}}</td>
                 <td>{{record.priority}}</td>
+                <td>{{record.marketPriority}}</td>
                 <td>{{record.region}}</td>
                 <td>{{record.health}}</td>
                 <td>{{record.projectManager}}</td>
@@ -82,16 +89,16 @@
                         (click)="getProjectDetails(record.IDX)"></button>
                     <button pTooltip="Delete this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-trash"
                         class="p-button-rounded p-button-danger" (click)="deleteRecord(record)"></button>
-                   
+
                 </td>
             </tr>
         </ng-template>
         <ng-template pTemplate=" summary">
-                        <div class="flex align-items-center justify-content-between">
-                            In total there are {{data ? data.length : 0 }} records.
-                        </div>
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{data ? data.length : 0 }} records.
+            </div>
         </ng-template>
-</p-table>
+    </p-table>
 </div>
 
 <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Create new project" [modal]="true"
@@ -111,13 +118,24 @@
                         formControlName="projectName" required>
                 </div>
             </div>
-
+            
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="hoursInPRM" class="control-label">Hours in PRM</label>
+                    <select class="form-control" formControlName="hoursInPRM">
+                        <option [ngValue]="null" disabled>Select Hours in PRM</option>
+                        <option  *ngFor="let hoursInPRM of hoursInPRMs"
+                            [ngValue]="hoursInPRM">{{hoursInPRM}}</option>
+                    </select>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="issueType" class="control-label">Issue Type</label>
                     <select class="form-control" formControlName="issueType">
                         <option [ngValue]="null" disabled>Select Issue Type</option>
-                        <option [disabled]="issueType == 'Subtask'" *ngFor="let issueType of projectTypes" [ngValue]="issueType">{{issueType}}</option>
+                        <option [disabled]="issueType == 'Subtask'" *ngFor="let issueType of projectTypes"
+                            [ngValue]="issueType">{{issueType}}</option>
                     </select>
                 </div>
             </div>
@@ -132,6 +150,13 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
+                    <label for="marketPriority" class="control-label">Market Priority</label>
+                    <input autocomplete="off" type="text" id="marketPriority" class="form-control" formControlName="marketPriority"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
                     <label for="region" class="control-label">Region</label>
                     <input autocomplete="off" type="text" id="region" class="form-control" formControlName="region"
                         required>
@@ -142,14 +167,16 @@
                     <label for="projectManager" class="control-label">Project Manager</label>
                     <select class="form-control" formControlName="projectManager">
                         <option [ngValue]="null" disabled>Select Project Manager</option>
-                        <option *ngFor="let projectManager of projectManagers" [ngValue]="projectManager">{{projectManager}}</option>
+                        <option *ngFor="let projectManager of projectManagers" [ngValue]="projectManager">
+                            {{projectManager}}</option>
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="status" class="control-label">Status</label>
-                    <select (change)="statusChangeHandler($event.target, true)" class="form-control" formControlName="status">
+                    <select (change)="statusChangeHandler($event.target, true)" class="form-control"
+                        formControlName="status">
                         <option [ngValue]="null" disabled>Select Status</option>
                         <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
                     </select>

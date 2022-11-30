@@ -237,8 +237,10 @@ async function updateData(record) {
             .input('parentTaskId', record.parentTaskId)
             .input('PRM', record.PRM)
             .input('projectName', record.projectName)
+            .input('hoursInPRM', record.hoursInPRM)
             .input('issueType', record.issueType)
             .input('priority', record.priority)
+            .input('marketPriority', record.marketPriority)
             .input('status', record.status)
             .input('assignee', record.assignee)
             .input('reporter', record.reporter)
@@ -256,8 +258,8 @@ async function updateData(record) {
             .input('goLive', record.goLive)
             .input('checklist', record.checklist)
             .input('progress', record.progress)
-            .query(`UPDATE PROJECTLIST SET parentTaskId = @parentTaskId, PRM = @PRM, projectName = @projectName,
-            issueType = @issueType, priority = @priority, status = @status, assignee = @assignee, reporter = @reporter,
+            .query(`UPDATE PROJECTLIST SET parentTaskId = @parentTaskId, PRM = @PRM, projectName = @projectName, hoursInPRM = @hoursInPRM,
+            issueType = @issueType, priority = @priority, marketPriority = @marketPriority, status = @status, assignee = @assignee, reporter = @reporter,
             description = @description, attachments = @attachments, startDate = @startDate, estimatedHours = @estimatedHours, 
             parentTaskLink = @parentTaskLink, comments = @comments,
             history = @history, subTasks = @subTasks, projectManager = @projectManager, health = @health,
@@ -326,8 +328,10 @@ async function createRecord(record) {
             .input('parentTaskId', record.parentTaskId)
             .input('PRM', record.PRM)
             .input('projectName', record.projectName)
+            .input('hoursInPRM', record.hoursInPRM)
             .input('issueType', record.issueType)
             .input('priority', record.priority)
+            .input('marketPriority', record.marketPriority)
             .input('status', record.status)
             .input('assignee', record.assignee)
             .input('reporter', record.reporter)
@@ -345,10 +349,10 @@ async function createRecord(record) {
             .input('goLive', record.goLive)
             .input('checklist', record.checklist)
             .input('progress', record.progress)
-            .query(`INSERT INTO PROJECTLIST (parentTaskId, PRM, projectName, issueType, priority, status,  assignee,
+            .query(`INSERT INTO PROJECTLIST (parentTaskId, PRM, projectName, hoursInPRM, issueType, priority, marketPriority, status,  assignee,
                 reporter, description, startDate, estimatedHours, parentTaskLink,
                 projectManager, health, region, 
-                goLive, progress) VALUES (@parentTaskId, @PRM, @projectName, @issueType, @priority, @status, @assignee, 
+                goLive, progress) VALUES (@parentTaskId, @PRM, @projectName, @hoursInPRM, @issueType, @priority, @marketPriority, @status, @assignee, 
                     @reporter, @description, @startDate, @estimatedHours, @parentTaskLink, @projectManager, @health, @region,
                     @goLive, @progress); Select * from PROJECTLIST Order By projectName`);
 
