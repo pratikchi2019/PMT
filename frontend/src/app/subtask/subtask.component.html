@@ -9,6 +9,10 @@
             </th>
             <th>Status
             </th>
+            <th>Assigned to
+            </th>
+            <th>Go live
+            </th>
             <th></th>
         </tr>
     </ng-template>
@@ -19,6 +23,8 @@
             <td><span
                     [class]="'product-badge status-' + (record.status ? record.status.toLowerCase() : '')">{{record.status}}</span>
             </td>
+            <td>{{record.assignee}}</td>
+            <td>{{record.goLive}}</td>
             <td>
                 <button pTooltip="Go to the details of this record" tooltipPosition="left" pButton pRipple
                     icon="pi pi-pencil" class="p-button-rounded p-button-info" (click)="getProjectDetails(record.IDX)"

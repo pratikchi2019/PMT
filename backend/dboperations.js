@@ -49,7 +49,7 @@ async function getAllData() {
     try {
         let pool = await conn.connect(config);
         let products = await pool.request()
-            .query(`SELECT * from PROJECTLIST Order By projectName`);
+            .query(`SELECT * from PROJECTLIST Order By goLive`);
         return products.recordsets;
     } catch (error) {
         console.log(error);

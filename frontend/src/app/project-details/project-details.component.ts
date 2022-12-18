@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -29,7 +30,7 @@ export class ProjectDetailsComponent implements OnInit {
   subtasks: any;
   hoursInPRMs: string[];
 
-  constructor(private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
+  constructor(private location: Location, private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
   dashboard: MenuItem;
   project: NodeData;
@@ -398,6 +399,10 @@ export class ProjectDetailsComponent implements OnInit {
 
   cancelHandler() {
     this.disableEdit = !this.disableEdit;
+  }
+
+  back(): void {
+    this.location.back()
   }
 
 

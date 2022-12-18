@@ -52,8 +52,10 @@ export class AppComponent {
   handleChange(e) {
     if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "Inventory Portal") {
       this.router.navigate(['inventory'])
-    } else if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "Project Management Tool") {
+    } else if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "Project Management") {
       this.router.navigate(['dashboard'])
-    }
+    }  else if(e.originalEvent.target.innerText && e.originalEvent.target.innerText === "User Management") {
+      this.router.navigate(['usermanagement'])
+    } 
   }
 }

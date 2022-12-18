@@ -8,7 +8,8 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table #dt [value]="data" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[5,10,25]" [paginator]="true"
+    <p-table sortField="goLive" #dt [value]="data" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[5,10,25]"
+        [paginator]="true"
         [globalFilterFields]="['projectName','PRM','priority', 'marketPriority', 'status', 'region', 'health', 'projectManager', 'estimatedHours', 'startDate', 'goLive']"
         responsiveLayout="scroll" [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
@@ -48,7 +49,7 @@
                 </th>
                 <th pSortableColumn="estimatedHours">Estimated Hours <p-sortIcon field="estimatedHours"></p-sortIcon>
                 </th>
-                <th pSortableColumn="startDate">Assigned Date <p-sortIcon field="startDate"></p-sortIcon>
+                <th pSortableColumn="startDate">Allocation Date <p-sortIcon field="startDate"></p-sortIcon>
                 </th>
                 <th pSortableColumn="goLive">Go Live <p-sortIcon field="goLive"></p-sortIcon>
                 </th>
@@ -74,8 +75,9 @@
                 <td>{{record.region}}</td>
                 <td>{{record.health}}</td>
                 <td>{{record.projectManager}}</td>
-                <td><span
-                        [class]="'product-badge status-' + (record.status ? record.status.toLowerCase() : '')">{{record.status}}</span>
+                <td [ngStyle]="{'background-color': record.status === 'Done' ? 'rgb(169, 213, 169)' : 
+                    record.status === 'Blocked' ? '#f79494' : record.status === 'Abandoned' ? '#f79494' : record.status === 'In Progress' ? '#fac943' : 'rgb(81, 176, 236)' }">
+                    {{record.status}}
                 </td>
                 <td>{{record.estimatedHours}}</td>
                 <td>{{record.startDate}}</td>
@@ -118,14 +120,13 @@
                         formControlName="projectName" required>
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="hoursInPRM" class="control-label">Hours in PRM</label>
                     <select class="form-control" formControlName="hoursInPRM">
                         <option [ngValue]="null" disabled>Select Hours in PRM</option>
-                        <option  *ngFor="let hoursInPRM of hoursInPRMs"
-                            [ngValue]="hoursInPRM">{{hoursInPRM}}</option>
+                        <option *ngFor="let hoursInPRM of hoursInPRMs" [ngValue]="hoursInPRM">{{hoursInPRM}}</option>
                     </select>
                 </div>
             </div>
@@ -151,8 +152,8 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="marketPriority" class="control-label">Market Priority</label>
-                    <input autocomplete="off" type="text" id="marketPriority" class="form-control" formControlName="marketPriority"
-                        required>
+                    <input autocomplete="off" type="text" id="marketPriority" class="form-control"
+                        formControlName="marketPriority" required>
                 </div>
             </div>
             <div class="form-group">
@@ -191,7 +192,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <label for="startDate" class="control-label">Assigned Date</label>
+                    <label for="startDate" class="control-label">Allocation Date</label>
                     <input autocomplete="off" type="date" id="startDate" class="form-control"
                         formControlName="startDate" required>
                 </div>
