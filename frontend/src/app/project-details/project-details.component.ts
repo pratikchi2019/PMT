@@ -29,6 +29,7 @@ export class ProjectDetailsComponent implements OnInit {
   data: any;
   subtasks: any;
   hoursInPRMs: string[];
+  checkList: any[];
 
   constructor(private location: Location, private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
@@ -54,6 +55,7 @@ export class ProjectDetailsComponent implements OnInit {
   userObject = {} as USERMANAGEMENT;
   uploadedFiles: any[] = [];
   form: FormGroup;
+  selectedChecklist: any[];
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       this.paramId = params['id']
@@ -122,6 +124,21 @@ export class ProjectDetailsComponent implements OnInit {
     ].sort((a, b) => {
       if (a.toLowerCase() < b.toLowerCase()) return -1
       if (a.toLowerCase() > b.toLowerCase()) return 1
+      return 0
+    })
+
+    this.checkList = [
+      {name: "Done", code: "Done", inactive: true},
+      {name: "In Progress", code: "In Progress"},
+      {name: "In Review", code: "In Review"},
+      {name: "Abandoned", code: "Abandoned"},
+      {name: "Blocked", code: "Blocked"},
+      {name: "In Test Env", code: "In Test Env"},
+      {name: "QA Passed", code: "QA Passed"},
+      {name: "In Production", code: "In Production"}
+    ].sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+      if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
       return 0
     })
 

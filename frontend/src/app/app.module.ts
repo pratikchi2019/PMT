@@ -50,6 +50,7 @@ import { CardModule } from 'primeng/card';
 import { SubtaskComponent } from './subtask/subtask.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { DatatableComponent } from './datatable/datatable.component';
+
 @NgModule({
   declarations: [
     AppComponent,
