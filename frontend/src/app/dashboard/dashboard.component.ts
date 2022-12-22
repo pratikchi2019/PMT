@@ -35,6 +35,8 @@ export class DashboardComponent implements OnInit {
   progress: any;
   projectManagers: any;
   hoursInPRMs: any[];
+  checkList: ({ name: string; code: string; inactive: boolean; } | { name: string; code: string; inactive?: undefined; })[];
+  selectedChecklist: any[];
 
   constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
@@ -47,7 +49,7 @@ export class DashboardComponent implements OnInit {
       hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
-      marketPriority: [null, Validators.required],
+      checkList: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],
@@ -63,15 +65,29 @@ export class DashboardComponent implements OnInit {
       'Bug',
       'Change Request'
     ],
-    this.hoursInPRMs = [
-      'True',
-      'False'
-    ],
-    this.statusTypes = [
-      "Done", "In Progress", "In Review", "Abandoned", "Blocked", "In Test Env", "QA Passed", "In Production"
+      this.hoursInPRMs = [
+        'True',
+        'False'
+      ],
+      this.statusTypes = [
+        "Done", "In Progress", "In Review", "Abandoned", "Blocked", "In Test Env", "QA Passed", "In Production"
+      ].sort((a, b) => {
+        if (a.toLowerCase() < b.toLowerCase()) return -1
+        if (a.toLowerCase() > b.toLowerCase()) return 1
+        return 0
+      })
+    this.checkList = [
+      { name: "Done", code: "Done", inactive: false },
+      { name: "In Progress", code: "In Progress" },
+      { name: "In Review", code: "In Review" },
+      { name: "Abandoned", code: "Abandoned" },
+      { name: "Blocked", code: "Blocked" },
+      { name: "In Test Env", code: "In Test Env" },
+      { name: "QA Passed", code: "QA Passed" },
+      { name: "In Production", code: "In Production" }
     ].sort((a, b) => {
-      if (a.toLowerCase() < b.toLowerCase()) return -1
-      if (a.toLowerCase() > b.toLowerCase()) return 1
+      if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+      if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
       return 0
     })
     this.priorityTypes = [
@@ -110,13 +126,15 @@ export class DashboardComponent implements OnInit {
   }
 
   createProject() {
+    console.log(this.form.value)
+    let checklist = this.form.value ? JSON.stringify(this.form.value.checkList) : null
+    this.form.value.checkList = checklist
     this.dataservice.createRecord(this.form.value).subscribe((res) => {
       console.log(res)
       this.productDialog = false;
       this.form.reset();
       this.data = res;
     })
-    console.log(this.form)
   }
 
   getAllUsers() {

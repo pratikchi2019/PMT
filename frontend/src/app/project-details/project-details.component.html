@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
                                 <div class="detailRow">
-                                    <div class="detailLeft">Priority : </div>
+                                    <div class="detailLeft">Market Priority : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i [class]="priorityIconClass"
                                             style="margin-right: 5px;"></i>
                                         {{project.priority}}</div>
@@ -82,7 +82,7 @@
                                     </div>
 
                                 </div>
-                                <div class="detailRow">
+                                <!-- <div class="detailRow">
                                     <div class="detailLeft">Market Priority : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i [class]="priorityIconClass"
                                             style="margin-right: 5px;"></i>
@@ -92,7 +92,7 @@
                                             pInputText placeholder="Market Priority">
                                     </div>
 
-                                </div>
+                                </div> -->
                                 <div *ngIf="project.issueType === 'Subtask'" class="detailRow">
                                     <div class="detailLeft">Parent Task : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-external-link"
@@ -107,7 +107,7 @@
                                     </div>
 
                                 </div>
-                                <div class="detailRow">
+                                <!-- <div class="detailRow">
                                     <div class="detailLeft">Health : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-bolt"
                                             style="margin-right: 10px;"></i>
@@ -117,7 +117,7 @@
                                             placeholder="Task health">
                                     </div>
 
-                                </div>
+                                </div> -->
                                 <div class="detailRow">
                                     <div class="detailLeft">Region : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-globe"
@@ -199,7 +199,7 @@
                                     <tr>
                                         <th>Name
                                         </th>
-                                        <th>Priority
+                                        <th>Market Priority
                                         </th>
                                         <th>Status
                                         </th>
@@ -305,13 +305,13 @@
 
                                 </div>
                                 <div class="detailRow">
-                                    <div class="detailLeft">Reporter : </div>
+                                    <div class="detailLeft">Project Manager : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-user"
-                                            style="margin-right: 10px;"></i>{{project.reporter}}
+                                            style="margin-right: 10px;"></i>{{project.projectManager}}
                                     </div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown [options]="allUsers" [(ngModel)]="project.reporter"
-                                            placeholder="Select a Reporter" [showClear]="true"></p-dropdown>
+                                        <p-dropdown [options]="allUsers" [(ngModel)]="project.projectManager"
+                                            placeholder="Select a Project Manager" [showClear]="true"></p-dropdown>
                                     </div>
                                 </div>
                             </div>
@@ -419,20 +419,20 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <label for="priority" class="control-label">Priority</label>
+                    <label for="priority" class="control-label">Market Priority</label>
                     <select class="form-control" formControlName="priority">
-                        <option [ngValue]="null" disabled>Select Priority</option>
+                        <option [ngValue]="null" disabled>Select Market Priority</option>
                         <option *ngFor="let priority of priorityTypes" [ngValue]="priority">{{priority}}</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-sm-12">
                     <label for="marketPriority" class="control-label">Market Priority</label>
                     <input autocomplete="off" type="text" id="marketPriority" class="form-control"
                         formControlName="marketPriority" required>
                 </div>
-            </div>
+            </div> -->
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="region" class="control-label">Region</label>

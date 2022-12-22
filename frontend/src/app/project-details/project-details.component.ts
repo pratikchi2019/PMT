@@ -66,7 +66,6 @@ export class ProjectDetailsComponent implements OnInit {
       this.getSubtasks();
       this.getProgress()
     })
-
     this.disableEdit = false;
     this.items = [
       {
@@ -155,7 +154,7 @@ export class ProjectDetailsComponent implements OnInit {
       hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
-      marketPriority: [null, Validators.required],
+      // marketPriority: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],
@@ -193,6 +192,7 @@ export class ProjectDetailsComponent implements OnInit {
       this.form.reset();
       this.form.get("parentTaskId").setValue(this.project.IDX);
       this.form.get("issueType").setValue('Subtask');
+      // this.form.get("projectManager").setValue('Subtask');
       this.subtasks = res.filter((a) => {
         return a.parentTaskId == this.project.IDX;
       });

@@ -35,14 +35,14 @@
                 </th>
                 <th pSortableColumn="hoursInPRM">Hrs in PRM <p-sortIcon field="hoursInPRM"></p-sortIcon>
                 </th>
-                <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon>
+                <th pSortableColumn="priority">Market Priority <p-sortIcon field="priority"></p-sortIcon>
                 </th>
-                <th pSortableColumn="marketPriority">Market Priority <p-sortIcon field="marketPriority"></p-sortIcon>
-                </th>
+                <!-- <th pSortableColumn="marketPriority">Market Priority <p-sortIcon field="marketPriority"></p-sortIcon>
+                </th> -->
                 <th pSortableColumn="region">Region <p-sortIcon field="region"></p-sortIcon>
                 </th>
-                <th pSortableColumn="health">Health <p-sortIcon field="health"></p-sortIcon>
-                </th>
+                <!-- <th pSortableColumn="health">Health <p-sortIcon field="health"></p-sortIcon>
+                </th> -->
                 <th pSortableColumn="projectManager">Project Manager <p-sortIcon field="projectManager"></p-sortIcon>
                 </th>
                 <th pSortableColumn="status">Status <p-sortIcon field="inventoryStatus"></p-sortIcon>
@@ -71,11 +71,12 @@
                 <td>{{record.projectName}}</td>
                 <td>{{record.hoursInPRM}}</td>
                 <td>{{record.priority}}</td>
-                <td>{{record.marketPriority}}</td>
+                <!-- <td>{{record.marketPriority}}</td> -->
                 <td>{{record.region}}</td>
-                <td>{{record.health}}</td>
+                <!-- <td>{{record.health}}</td> -->
                 <td>{{record.projectManager}}</td>
-                <td [ngStyle]="{'background-color': record.status === 'Done' ? 'rgb(169, 213, 169)' : 
+                <td
+                    [ngStyle]="{'background-color': record.status === 'Done' ? 'rgb(169, 213, 169)' : 
                     record.status === 'Blocked' ? '#f79494' : record.status === 'Abandoned' ? '#f79494' : record.status === 'In Progress' ? '#fac943' : 'rgb(81, 176, 236)' }">
                     {{record.status}}
                 </td>
@@ -142,20 +143,20 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <label for="priority" class="control-label">Priority</label>
+                    <label for="priority" class="control-label">Market Priority</label>
                     <select class="form-control" formControlName="priority">
-                        <option [ngValue]="null" disabled>Select Priority</option>
+                        <option [ngValue]="null" disabled>Select Market Priority</option>
                         <option *ngFor="let priority of priorityTypes" [ngValue]="priority">{{priority}}</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-sm-12">
                     <label for="marketPriority" class="control-label">Market Priority</label>
                     <input autocomplete="off" type="text" id="marketPriority" class="form-control"
                         formControlName="marketPriority" required>
                 </div>
-            </div>
+            </div> -->
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="region" class="control-label">Region</label>
@@ -181,6 +182,14 @@
                         <option [ngValue]="null" disabled>Select Status</option>
                         <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
                     </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="checkList" class="control-label">Checklist</label>
+                    <p-multiSelect class="form-control" formControlName="checkList" optionDisabled="inactive"
+                        [options]="checkList" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
+
                 </div>
             </div>
             <div class="form-group">

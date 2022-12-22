@@ -22,5 +22,6 @@ export interface NodeData {
     region?: string,
     goLive?: string,
     checkList?: string,
-    progress?: number
+    progress?: number,
+    checklist?: string
 }
