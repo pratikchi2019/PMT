@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ActivateGuard } from './activate.guard';
+import { ArchiveComponent } from './archive/archive.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DatatableComponent } from './datatable/datatable.component';
 import { LoginComponent } from './login/login.component';
@@ -18,7 +19,7 @@ const routes: Routes = [
   { path: 'stats', component: StatsComponent, canActivate: [UserGuard] }, //canActivate: [UserGuard]
   { path: 'inventory', component: DatatableComponent, canActivate: [ActivateGuard] },
   { path: 'usermanagement', component: UserManagementComponent, canActivate: [UserGuard], outlet: "outlet1"},
-
+  { path: 'archive', component: ArchiveComponent, canActivate: [ActivateGuard] }
   // { path: '**', component: PagenotfoundComponent }
 ];
 

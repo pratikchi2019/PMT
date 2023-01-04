@@ -16,7 +16,7 @@
                 </ul> -->
                 <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav active">
                     <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/dashboard" routerLinkActive="['active']">Dashboard</a></li>
-                </ul> 
+                </ul>
         
                 <!-- <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
                     <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/usermanagement" routerLinkActive="['active']">User Management</a></li>
@@ -24,6 +24,9 @@
         
                 <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
                     <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/stats" routerLinkActive="['active']">Statistics</a></li>
+                </ul> 
+                <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
+                    <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a routerLink="/archive" routerLinkActive="['active']">Archives</a></li>
                 </ul> 
         
                 <ul *ngIf="(dataservice.authenticated$ | async) === false" class="nav navbar-nav navbar-right">
@@ -39,7 +42,7 @@
             </div>
         </nav>
     </p-tabPanel>
-    <p-tabPanel id="inventory" header="Inventory Portal">
+    <p-tabPanel *ngIf="(dataservice.authenticated$ | async) === true" id="inventory" header="Inventory Portal">
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <ul *ngIf="(dataservice.authenticated$ | async) === true" class="nav navbar-nav">
@@ -62,13 +65,12 @@
         </nav>
         
     </p-tabPanel>
-    <p-tabPanel id="userManagement" header="User Management">
+    <p-tabPanel *ngIf="(dataservice.authenticated$ | async) === true" id="userManagement" header="User Management">
 
     </p-tabPanel>
 </p-tabView>
 
 <router-outlet></router-outlet>
 <router-outlet name="outlet1"></router-outlet>
-<!-- <router-outlet *ngIf="(dataservice.authenticated$ | async) === false"></router-outlet> -->
 
 

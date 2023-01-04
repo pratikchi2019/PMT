@@ -1,0 +1,201 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <!-- <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button>
+        </ng-template>
+    </p-toolbar> -->
+
+    <p-table sortField="goLive" #dt [value]="data" [rows]="10" responsiveLayout="scroll" [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="PRM">PRM <p-sortIcon field="PRM"></p-sortIcon>
+                </th>
+                <th pSortableColumn="projectName">Name <p-sortIcon field="projectName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="hoursInPRM">Hrs in PRM <p-sortIcon field="hoursInPRM"></p-sortIcon>
+                </th>
+                <th pSortableColumn="priority">Market Priority <p-sortIcon field="priority"></p-sortIcon>
+                </th>
+                <!-- <th pSortableColumn="marketPriority">Market Priority <p-sortIcon field="marketPriority"></p-sortIcon>
+                </th> -->
+                <th pSortableColumn="region">Region <p-sortIcon field="region"></p-sortIcon>
+                </th>
+                <!-- <th pSortableColumn="health">Health <p-sortIcon field="health"></p-sortIcon>
+                </th> -->
+                <th pSortableColumn="projectManager">Project Manager <p-sortIcon field="projectManager"></p-sortIcon>
+                </th>
+                <th pSortableColumn="status">Status <p-sortIcon field="inventoryStatus"></p-sortIcon>
+                </th>
+                <th pSortableColumn="estimatedHours">Estimated Hours <p-sortIcon field="estimatedHours"></p-sortIcon>
+                </th>
+                <th pSortableColumn="startDate">Allocation Date <p-sortIcon field="startDate"></p-sortIcon>
+                </th>
+                <th pSortableColumn="goLive">Go Live <p-sortIcon field="goLive"></p-sortIcon>
+                </th>
+                <th>Progress</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-record>
+            <tr>
+                <td style="width: 4%;">{{record.PRM}}</td>
+                <td>{{record.projectName}}</td>
+                <td>{{record.hoursInPRM}}</td>
+                <td>{{record.priority}}</td>
+                <!-- <td>{{record.marketPriority}}</td> -->
+                <td>{{record.region}}</td>
+                <!-- <td>{{record.health}}</td> -->
+                <td>{{record.projectManager}}</td>
+                <td
+                    [ngStyle]="{'background-color': record.status === 'Done' ? 'rgb(169, 213, 169)' : 
+                    record.status === 'Blocked' ? '#f79494' : record.status === 'Abandoned' ? '#f79494' : record.status === 'In Progress' ? '#fac943' : 'rgb(81, 176, 236)' }">
+                    {{record.status}}
+                </td>
+                <td>{{record.estimatedHours}}</td>
+                <td>{{record.startDate}}</td>
+                <td>{{record.goLive}}</td>
+                <td>
+                    <p-progressBar [value]="record.progress"></p-progressBar>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate=" summary">
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{data ? data.length : 0 }} records.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Create new project" [modal]="true"
+    styleClass="p-fluid" [breakpoints]="{'960px': '75vw'}">
+    <ng-template pTemplate="content">
+        <form class="form-horizontal" [formGroup]="form">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="PRM" class="control-label">PRM</label>
+                    <input type="number" id="PRM" class="form-control" formControlName="PRM" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="projectName" class="control-label">Project Name</label>
+                    <input autocomplete="off" type="text" id="projectName" class="form-control"
+                        formControlName="projectName" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="hoursInPRM" class="control-label">Hours in PRM</label>
+                    <select class="form-control" formControlName="hoursInPRM">
+                        <option [ngValue]="null" disabled>Select Hours in PRM</option>
+                        <option *ngFor="let hoursInPRM of hoursInPRMs" [ngValue]="hoursInPRM">{{hoursInPRM}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="issueType" class="control-label">Issue Type</label>
+                    <select class="form-control" formControlName="issueType">
+                        <option [ngValue]="null" disabled>Select Issue Type</option>
+                        <option [disabled]="issueType == 'Subtask'" *ngFor="let issueType of projectTypes"
+                            [ngValue]="issueType">{{issueType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="priority" class="control-label">Market Priority</label>
+                    <select class="form-control" formControlName="priority">
+                        <option [ngValue]="null" disabled>Select Market Priority</option>
+                        <option *ngFor="let priority of priorityTypes" [ngValue]="priority">{{priority}}</option>
+                    </select>
+                </div>
+            </div>
+            <!-- <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="marketPriority" class="control-label">Market Priority</label>
+                    <input autocomplete="off" type="text" id="marketPriority" class="form-control"
+                        formControlName="marketPriority" required>
+                </div>
+            </div> -->
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="region" class="control-label">Region</label>
+                    <input autocomplete="off" type="text" id="region" class="form-control" formControlName="region"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="projectManager" class="control-label">Project Manager</label>
+                    <select class="form-control" formControlName="projectManager">
+                        <option [ngValue]="null" disabled>Select Project Manager</option>
+                        <option *ngFor="let projectManager of projectManagers" [ngValue]="projectManager">
+                            {{projectManager}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="status" class="control-label">Status</label>
+                    <select (change)="statusChangeHandler($event.target, true)" class="form-control"
+                        formControlName="status">
+                        <option [ngValue]="null" disabled>Select Status</option>
+                        <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="checkList" class="control-label">Checklist</label>
+                    <p-multiSelect class="form-control" formControlName="checkList" optionDisabled="inactive"
+                        [options]="checkList" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="estimatedHours" class="control-label">Estimated Hours</label>
+                    <input autocomplete="off" type="number" id="estimatedHours" class="form-control"
+                        formControlName="estimatedHours" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="startDate" class="control-label">Allocation Date</label>
+                    <input autocomplete="off" type="date" id="startDate" class="form-control"
+                        formControlName="startDate" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="goLive" class="control-label">Go Live Date</label>
+                    <input autocomplete="off" type="date" id="goLive" class="form-control" formControlName="goLive"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="progress" class="control-label">Progress %</label>
+                    <input autocomplete="off" type="number" id="progress" class="form-control" max="100" min="0"
+                        formControlName="progress" required disabled>
+                </div>
+            </div>
+
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="closeDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="!form.valid" class="p-button-text"
+            (click)="createProject()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+<router-outlet></router-outlet>

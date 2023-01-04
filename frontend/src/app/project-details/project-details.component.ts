@@ -30,6 +30,7 @@ export class ProjectDetailsComponent implements OnInit {
   subtasks: any;
   hoursInPRMs: string[];
   checkList: any[];
+  checkListTemplate: string;
 
   constructor(private location: Location, private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
@@ -206,7 +207,14 @@ export class ProjectDetailsComponent implements OnInit {
   getProjectDetails(id) {
     this.dataservice.getProjectDetails(id).subscribe((res) => {
       this.dataservice.setselectedProject(res[0]);
-      this.project = res[0]
+      this.project = res[0];
+      this.checkListTemplate = ""
+      console.log(JSON.parse(this.project.checklist))
+      JSON.parse(this.project.checklist).forEach((x) => {
+        // let y = y + x.name + ", "
+        this.checkListTemplate = this.checkListTemplate + x.name + ", "
+      })
+      this.selectedChecklist = JSON.parse(this.project.checklist)
     }, (error) => {
       console.log(error)
     })

@@ -50,6 +50,7 @@ import { CardModule } from 'primeng/card';
 import { SubtaskComponent } from './subtask/subtask.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { DatatableComponent } from './datatable/datatable.component';
+import { ArchiveComponent } from './archive/archive.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { DatatableComponent } from './datatable/datatable.component';
     StatsComponent,
     SubtaskComponent,
     DatatableComponent,
+    ArchiveComponent,
   ],
   entryComponents: [
     SubtaskComponent

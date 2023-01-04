@@ -132,7 +132,7 @@
                                     <div class="detailLeft">Checklist : </div>
                                     <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-globe"
                                             style="margin-right: 5px;"></i>
-                                        {{project.checklist}}</div>
+                                        {{checkListTemplate}}</div>
                                     <div *ngIf="disableEdit" class="detailRight">
                                         <p-multiSelect optionDisabled="inactive" [options]="checkList" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
                                     </div>
@@ -506,3 +506,5 @@
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
 <router-outlet></router-outlet>
+
+
