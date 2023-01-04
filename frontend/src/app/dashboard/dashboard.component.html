@@ -167,11 +167,8 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="projectManager" class="control-label">Project Manager</label>
-                    <select class="form-control" formControlName="projectManager">
-                        <option [ngValue]="null" disabled>Select Project Manager</option>
-                        <option *ngFor="let projectManager of projectManagers" [ngValue]="projectManager">
-                            {{projectManager}}</option>
-                    </select>
+                    <input autocomplete="off" type="text" id="projectManager" class="form-control" formControlName="projectManager"
+                    required>
                 </div>
             </div>
             <div class="form-group">

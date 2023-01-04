@@ -6,13 +6,14 @@
     <p-image src="assets/CHI_Logo.png" alt="Image" width="50" height="50"></p-image>
     <span>
         <h1 *ngIf="!disableEdit" class="header-title">{{project.projectName}}</h1>
-        <p-button label="Go Back" icon="pi pi-chevron-left" class="btn-float-right" (click)="back()" [disabled]="disableEdit">
+        <p-button label="Go Back" icon="pi pi-chevron-left" class="btn-float-right" (click)="back()"
+            [disabled]="disableEdit">
         </p-button> &nbsp;
     </span>
     <div *ngIf="disableEdit" style="padding-left: 10px; display: inline-block; width: 95%;">
         <input style="width: 100%; font-size: larger; padding: 10px;" type="text" [(ngModel)]="project.projectName"
-            pInputText placeholder="Project Name">  &nbsp;
-        
+            pInputText placeholder="Project Name"> &nbsp;
+
     </div>
     <!-- <p-button label="{{project.projectName}}" icon="pi pi-users" styleClass="p-button-primary titleBtn">
     </p-button> -->
@@ -134,7 +135,8 @@
                                             style="margin-right: 5px;"></i>
                                         {{checkListTemplate}}</div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-multiSelect optionDisabled="inactive" [options]="checkList" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
+                                        <p-multiSelect optionDisabled="inactive" [options]="checkList"
+                                            [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
                                     </div>
                                 </div>
                             </div>
@@ -310,8 +312,10 @@
                                             style="margin-right: 10px;"></i>{{project.projectManager}}
                                     </div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown [options]="allUsers" [(ngModel)]="project.projectManager"
-                                            placeholder="Select a Project Manager" [showClear]="true"></p-dropdown>
+                                        <!-- <p-dropdown [options]="allUsers" [(ngModel)]="project.projectManager"
+                                            placeholder="Select a Project Manager" [showClear]="true"></p-dropdown> -->
+                                        <input style="width: 50%" type="text" [(ngModel)]="project.projectManager"
+                                            pInputText placeholder="Enter Project Manager Name">
                                     </div>
                                 </div>
                             </div>
@@ -443,11 +447,8 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="projectManager" class="control-label">Project Manager</label>
-                    <select class="form-control" formControlName="projectManager">
-                        <option [ngValue]="null" disabled>Select Project Manager</option>
-                        <option *ngFor="let projectManager of allUsers" [ngValue]="projectManager">{{projectManager}}
-                        </option>
-                    </select>
+                    <input autocomplete="off" type="text" id="projectManager" class="form-control"
+                        formControlName="projectManager" required>
                 </div>
             </div>
             <div class="form-group">
@@ -506,5 +507,3 @@
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
 <router-outlet></router-outlet>
-
-
