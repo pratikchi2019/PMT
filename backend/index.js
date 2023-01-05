@@ -1,6 +1,6 @@
 var Db = require('./dboperations');
 const dboperations = require('./dboperations');
-
+const nodemailer = require("nodemailer");
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
@@ -9,8 +9,8 @@ var app = express();
 var router = express.Router();
 var upload = multer();
 app.use(upload.array());
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1000000 }));
 app.use(cors());
 
 app.use('/api', router);
@@ -214,7 +214,7 @@ router.route('/projectDetails').post((request, response) => {
     })
 })
 
-router.route('/upload').post((request, response) => {    
+router.route('/upload').post((request, response) => {
     console.log(request.body)
     // dboperations.upload(request.body).then(result => {
     //     return response.json(result[0]);
@@ -228,7 +228,42 @@ router.route('/attachments').post((request, response) => {
 })
 
 router.route('/saveHistory').post((request, response) => {
+
     dboperations.saveHistory(request.body).then(result => {
+        async function main() {
+            // Generate test SMTP service account from ethereal.email
+            // Only needed if you don't have a real mail account for testing
+            let testAccount = await nodemailer.createTestAccount();
+
+            // create reusable transporter object using the default SMTP transport
+            let transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: "kashinatharora29@gmail.com", // generated ethereal user
+                    pass: "fnzttxfyoishntvv", // generated ethereal password
+                },
+            });
+
+            // send mail with defined transport object
+            let info = await transporter.sendMail({
+                from: '"Kashinath Arora" <kashinatharora29@gmail.com>', // sender address
+                to: "pratik.srivastava@commonspirit.org, nitintalwar1982@gmail.com, srivastavapratik@yahoo.com, kashinatharora29@gmail.com", // list of receivers 
+                subject: "Kashi Checking mailing service for PMT ✔", // Subject line
+                text: "Hello world?", // plain text body
+                html: "<div><h2> There is a change in project assigned to you </h2></div> <div><b>Please find below details</b></div>" + "<div><b>Project Name : </b>" + request.body.projectName + "</div>" + "<div><b>Field Name : </b>" + request.body.fieldName + "</div>" + "<div><b>Old Value : </b>" + "<s>" + request.body.oldValue + "</s>" + "</div>" + "<div><b>New Value : </b>" + request.body.newValue + "</div>" + "<div><b>Username : </b>" + request.body.FirstName + " " + request.body.LastName + "</div>", // html body
+            });
+
+            console.log("Message sent: %s", info.messageId);
+            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+            // Preview only available when sending through an Ethereal account
+            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+        }
+
+        main().catch(console.error);
         return response.json(result[0]);
     })
 })

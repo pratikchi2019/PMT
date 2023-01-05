@@ -298,6 +298,7 @@ export class ProjectDetailsComponent implements OnInit {
           historyObj.FirstName = this.userObject.FirstName;
           historyObj.LastName = this.userObject.LastName;
           historyObj.PRM = this.project.PRM;
+          historyObj.projectName = this.project.projectName;
           historyObj.updatedDateTime = new Date().toLocaleString("en", {
             weekday: "short",
             year: "numeric",

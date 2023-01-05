@@ -107,9 +107,35 @@ export class ArchiveComponent implements OnInit {
     })
   }
 
+  openNew() {
+    this.record = {};
+    this.submitted = false;
+    this.productDialog = true;
+  }
+
+  getProjectDetails(id) {
+    this.dataservice.getProjectDetails(id).subscribe((res) => {
+      this.dataservice.setselectedProject(res[0]);
+      this.router.navigate([`project-details/${id}`])
+    }, (error) => {
+      console.log(error)
+    })
+  }
 
   closeDialog() {
     this.productDialog = false;
+  }
+
+  createProject() {
+    console.log(this.form.value)
+    let checklist = this.form.value ? JSON.stringify(this.form.value.checkList) : null
+    this.form.value.checkList = checklist
+    this.dataservice.createRecord(this.form.value).subscribe((res) => {
+      console.log(res)
+      this.productDialog = false;
+      this.form.reset();
+      this.data = res;
+    })
   }
 
   getAllUsers() {
@@ -128,6 +154,21 @@ export class ArchiveComponent implements OnInit {
       },
       header: `Subtasks linked with ${record.projectName}`,
       width: '70%'
+    });
+  }
+  deleteRecord(record) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete ' + record.projectName + '?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.dataservice.deleteRecord(record).subscribe((data) => {
+          console.log(data)
+          this.data = this.data.filter(val => val.IDX !== record.IDX).filter((x) => x.status.toLowerCase() === "done");
+        })
+        this.record = {};
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Record Deleted', life: 3000 });
+      }
     });
   }
 

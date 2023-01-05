@@ -8,9 +8,27 @@
         </ng-template>
     </p-toolbar> -->
 
-    <p-table sortField="goLive" #dt [value]="data" [rows]="10" responsiveLayout="scroll" [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX">
+    <p-table sortField="goLive" #dt [value]="data" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[5,10,25]"
+        [paginator]="true"
+        [globalFilterFields]="['projectName','PRM','priority', 'marketPriority', 'status', 'region', 'health', 'projectManager', 'estimatedHours', 'startDate', 'goLive']"
+        responsiveLayout="scroll" [(selection)]="selectedProducts" [rowHover]="true" dataKey="IDX"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h6 class="m-0">Search Data</h6>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
         <ng-template pTemplate="header">
             <tr>
+                <!-- <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th> -->
+                <th></th>
                 <th pSortableColumn="PRM">PRM <p-sortIcon field="PRM"></p-sortIcon>
                 </th>
                 <th pSortableColumn="projectName">Name <p-sortIcon field="projectName"></p-sortIcon>
@@ -36,10 +54,19 @@
                 <th pSortableColumn="goLive">Go Live <p-sortIcon field="goLive"></p-sortIcon>
                 </th>
                 <th>Progress</th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-record>
             <tr>
+                <!-- <td>
+                    <p-tableCheckbox [value]="record"></p-tableCheckbox>
+                </td> -->
+                <td>
+                    <button *ngIf="record.subTasks === 'true'" pTooltip="View Subtasks" tooltipPosition="bottom" pButton
+                        pRipple icon="pi pi-plus" class="p-button-rounded p-button-help"
+                        (click)="show(record)"></button>
+                </td>
                 <td style="width: 4%;">{{record.PRM}}</td>
                 <td>{{record.projectName}}</td>
                 <td>{{record.hoursInPRM}}</td>
@@ -58,6 +85,14 @@
                 <td>{{record.goLive}}</td>
                 <td>
                     <p-progressBar [value]="record.progress"></p-progressBar>
+                </td>
+                <td>
+                    <button pTooltip="Go to the details of this record" tooltipPosition="left" pButton pRipple
+                        icon="pi pi-pencil" class="p-button-rounded p-button-info"
+                        (click)="getProjectDetails(record.IDX)"></button>
+                    <button pTooltip="Delete this record" tooltipPosition="bottom" pButton pRipple icon="pi pi-trash"
+                        class="p-button-rounded p-button-danger" (click)="deleteRecord(record)"></button>
+
                 </td>
             </tr>
         </ng-template>
