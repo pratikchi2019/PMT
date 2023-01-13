@@ -21,7 +21,6 @@ export interface NodeData {
     health?: string,
     region?: string,
     goLive?: string,
-    checkList?: string,
-    progress?: number,
-    checklist?: string
+    checklist?: string,
+    progress?: number
 }

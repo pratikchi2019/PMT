@@ -347,14 +347,14 @@ async function createRecord(record) {
             .input('health', record.health)
             .input('region', record.region)
             .input('goLive', record.goLive)
-            .input('checkList', record.checkList)
+            .input('checklist', record.checklist)
             .input('progress', record.progress)
             .query(`INSERT INTO PROJECTLIST (parentTaskId, PRM, projectName, hoursInPRM, issueType, priority, marketPriority, status,  assignee,
                 reporter, description, startDate, estimatedHours, parentTaskLink,
                 projectManager, health, region, 
-                goLive, checkList, progress) VALUES (@parentTaskId, @PRM, @projectName, @hoursInPRM, @issueType, @priority, @marketPriority, @status, @assignee, 
+                goLive, checklist, progress) VALUES (@parentTaskId, @PRM, @projectName, @hoursInPRM, @issueType, @priority, @marketPriority, @status, @assignee, 
                     @reporter, @description, @startDate, @estimatedHours, @parentTaskLink, @projectManager, @health, @region,
-                    @goLive, @checkList, @progress); Select * from PROJECTLIST Order By goLive`);
+                    @goLive, @checklist, @progress); Select * from PROJECTLIST Order By goLive`);
 
         setTimeout(() => {
             if (record.parentTaskId) {

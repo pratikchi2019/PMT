@@ -36,7 +36,7 @@ export class ArchiveComponent implements OnInit {
   progress: any;
   projectManagers: any;
   hoursInPRMs: any[];
-  checkList: ({ name: string; code: string; inactive: boolean; } | { name: string; code: string; inactive?: undefined; })[];
+  checklist: ({ name: string; code: string; inactive: boolean; } | { name: string; code: string; inactive?: undefined; })[];
   selectedChecklist: any[];
 
   constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
@@ -50,7 +50,7 @@ export class ArchiveComponent implements OnInit {
       hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
-      checkList: [null, Validators.required],
+      checklist: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],
@@ -77,7 +77,7 @@ export class ArchiveComponent implements OnInit {
         if (a.toLowerCase() > b.toLowerCase()) return 1
         return 0
       })
-    this.checkList = [
+    this.checklist = [
       { name: "Done", code: "Done", inactive: false },
       { name: "In Progress", code: "In Progress" },
       { name: "In Review", code: "In Review" },
@@ -128,8 +128,8 @@ export class ArchiveComponent implements OnInit {
 
   createProject() {
     console.log(this.form.value)
-    let checklist = this.form.value ? JSON.stringify(this.form.value.checkList) : null
-    this.form.value.checkList = checklist
+    let checklist = this.form.value ? JSON.stringify(this.form.value.checklist) : null
+    this.form.value.checklist = checklist
     this.dataservice.createRecord(this.form.value).subscribe((res) => {
       console.log(res)
       this.productDialog = false;

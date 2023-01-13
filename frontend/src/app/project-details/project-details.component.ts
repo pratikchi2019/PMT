@@ -29,8 +29,8 @@ export class ProjectDetailsComponent implements OnInit {
   data: any;
   subtasks: any;
   hoursInPRMs: string[];
-  checkList: any[];
-  checkListTemplate: string;
+  checklist: any[];
+  checklistTemplate: string;
 
   constructor(private location: Location, private dataservice: DataserviceService, private sanitizer: DomSanitizer, private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
   items: any[];
@@ -127,15 +127,15 @@ export class ProjectDetailsComponent implements OnInit {
       return 0
     })
 
-    this.checkList = [
-      {name: "Done", code: "Done", inactive: true},
-      {name: "In Progress", code: "In Progress"},
-      {name: "In Review", code: "In Review"},
-      {name: "Abandoned", code: "Abandoned"},
-      {name: "Blocked", code: "Blocked"},
-      {name: "In Test Env", code: "In Test Env"},
-      {name: "QA Passed", code: "QA Passed"},
-      {name: "In Production", code: "In Production"}
+    this.checklist = [
+      { name: "Done", code: "Done" },
+      { name: "In Progress", code: "In Progress" },
+      { name: "In Review", code: "In Review" },
+      { name: "Abandoned", code: "Abandoned" },
+      { name: "Blocked", code: "Blocked" },
+      { name: "In Test Env", code: "In Test Env" },
+      { name: "QA Passed", code: "QA Passed" },
+      { name: "In Production", code: "In Production" }
     ].sort((a, b) => {
       if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
       if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
@@ -208,17 +208,23 @@ export class ProjectDetailsComponent implements OnInit {
     this.dataservice.getProjectDetails(id).subscribe((res) => {
       this.dataservice.setselectedProject(res[0]);
       this.project = res[0];
-      this.checkListTemplate = ""
+      this.checklistTemplate = ""
       console.log(JSON.parse(this.project.checklist))
       JSON.parse(this.project.checklist).forEach((x) => {
         // let y = y + x.name + ", "
-        this.checkListTemplate = this.checkListTemplate + x.name + ", "
+        this.checklistTemplate = this.checklistTemplate + x.name + ", "
       })
       this.selectedChecklist = JSON.parse(this.project.checklist)
+      this.project.progress = Number(((100 / 8) * this.selectedChecklist.length).toFixed(0))
+
     }, (error) => {
       console.log(error)
     })
   }
+  // checklistChangeHandler(e) {
+  //   console.log(e)
+  //   this.form.get("progress").setValue(Number(((100 / 8) * this.selectedChecklist.length).toFixed(0)));
+  // }
 
   getSubtaskDetails(id) {
     this.dataservice.getProjectDetails(id).subscribe((res) => {
@@ -283,6 +289,13 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   saveDetails() {
+    console.log(Number((100 / this.selectedChecklist.length).toFixed(0)))
+    this.project.progress = Number(((100 / 8) * this.selectedChecklist.length).toFixed(0))
+    this.project.checklist = JSON.stringify(this.selectedChecklist);
+    this.checklistTemplate = ""
+    this.selectedChecklist.forEach((x: any) => {
+      this.checklistTemplate += x.name + ", "
+    })
     this.dataservice.updateProject(this.project).subscribe((res) => {
       this.disableEdit = false;
       this.applyStyles();
@@ -311,12 +324,12 @@ export class ProjectDetailsComponent implements OnInit {
           })
           this.historyArr.push(historyObj)
           this.dataservice.saveHistory(historyObj).subscribe((dt) => {
-            this.historyArr = dt;  // performance issue; TBD. as multiple calls
+            this.historyArr = dt;
           })
         }
       }
       window.localStorage.setItem('newData', JSON.stringify(this.project));
-
+      this.getSelectedProject()
     })
 
   }

@@ -67,9 +67,10 @@
                                             [styleClass]="statusBtnStyleClass"></p-button>
                                     </div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-dropdown (onChange)="statusChangeHandler($event)" [options]="statusTypes"
+                                        <p-dropdown [options]="statusTypes"
                                             [(ngModel)]="project.status" placeholder="Select a Status"
                                             [showClear]="true"></p-dropdown>
+                                            <!-- (onChange)="statusChangeHandler($event)"  -->
                                     </div>
                                 </div>
                                 <div class="detailRow">
@@ -131,11 +132,11 @@
                                 </div>
                                 <div class="detailRow">
                                     <div class="detailLeft">Checklist : </div>
-                                    <div *ngIf="!disableEdit" class="detailRight"><i class="fa fa-globe"
+                                    <div *ngIf="!disableEdit" class="detailRight"><i class="pi pi-check"
                                             style="margin-right: 5px;"></i>
-                                        {{checkListTemplate}}</div>
+                                        {{checklistTemplate}}</div>
                                     <div *ngIf="disableEdit" class="detailRight">
-                                        <p-multiSelect optionDisabled="inactive" [options]="checkList"
+                                        <p-multiSelect optionDisabled="inactive" [options]="checklist"
                                             [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
                                     </div>
                                 </div>
@@ -454,8 +455,9 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="status" class="control-label">Status</label>
-                    <select (change)="statusChangeHandler($event.target, true)" class="form-control"
-                        formControlName="status">
+                    <select class="form-control"
+                        formControlName="status" (change)="statusChangeHandler($event.target, true)" > 
+                        <!-- (change)="statusChangeHandler($event.target, true)"  -->
                         <option [ngValue]="null" disabled>Select Status</option>
                         <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
                     </select>

@@ -174,8 +174,9 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label for="status" class="control-label">Status</label>
-                    <select (change)="statusChangeHandler($event.target, true)" class="form-control"
+                    <select class="form-control"
                         formControlName="status">
+                        <!-- (change)="statusChangeHandler($event.target, true)" -->
                         <option [ngValue]="null" disabled>Select Status</option>
                         <option *ngFor="let status of statusTypes" [ngValue]="status">{{status}}</option>
                     </select>
@@ -183,9 +184,9 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-12">
-                    <label for="checkList" class="control-label">Checklist</label>
-                    <p-multiSelect class="form-control" formControlName="checkList" optionDisabled="inactive"
-                        [options]="checkList" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
+                    <label for="checklist" class="control-label">Checklist</label>
+                    <p-multiSelect (onChange)="checklistChangeHandler($event)" class="form-control" formControlName="checklist" optionDisabled="inactive"
+                        [options]="checklist" [(ngModel)]="selectedChecklist" optionLabel="name"></p-multiSelect>
 
                 </div>
             </div>

@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
   progress: any;
   projectManagers: any;
   hoursInPRMs: any[];
-  checkList: ({ name: string; code: string; inactive: boolean; } | { name: string; code: string; inactive?: undefined; })[];
+  checklist: ({ name: string; code: string; inactive: boolean; } | { name: string; code: string; inactive?: undefined; })[];
   selectedChecklist: any[];
 
   constructor(public dialogService: DialogService, private dataservice: DataserviceService, private router: Router, private formBuilder: FormBuilder, private messageService: MessageService, private confirmationService: ConfirmationService) { }
@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
       hoursInPRM: [null, Validators.required],
       issueType: [null, Validators.required],
       priority: [null, Validators.required],
-      checkList: [null, Validators.required],
+      checklist: [null, Validators.required],
       region: [null, Validators.required],
       projectManager: [null, Validators.required],
       status: [null, Validators.required],
@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit {
         if (a.toLowerCase() > b.toLowerCase()) return 1
         return 0
       })
-    this.checkList = [
+    this.checklist = [
       { name: "Done", code: "Done", inactive: false },
       { name: "In Progress", code: "In Progress" },
       { name: "In Review", code: "In Review" },
@@ -126,15 +126,19 @@ export class DashboardComponent implements OnInit {
   }
 
   createProject() {
-    console.log(this.form.value)
-    let checklist = this.form.value ? JSON.stringify(this.form.value.checkList) : null
-    this.form.value.checkList = checklist
+    let checklist = this.form.value ? JSON.stringify(this.form.value.checklist) : null
+    this.form.get("checklist").setValue(checklist)
+    this.form.get("progress").setValue(Number(((100 / 8) * this.selectedChecklist.length).toFixed(0)));
     this.dataservice.createRecord(this.form.value).subscribe((res) => {
       console.log(res)
       this.productDialog = false;
       this.form.reset();
       this.data = res.filter((x) => x.status.toLowerCase() !== "done");;
     })
+  }
+  checklistChangeHandler(e) {
+    console.log(e)
+    this.form.get("progress").setValue(Number(((100 / 8) * this.selectedChecklist.length).toFixed(0)));
   }
 
   getAllUsers() {

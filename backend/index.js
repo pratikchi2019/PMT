@@ -241,8 +241,8 @@ router.route('/saveHistory').post((request, response) => {
                 port: 587,
                 secure: false, // true for 465, false for other ports
                 auth: {
-                    user: "kashinatharora29@gmail.com", // generated ethereal user
-                    pass: "fnzttxfyoishntvv", // generated ethereal password
+                    user: "", // generated ethereal user
+                    pass: "", // generated ethereal password
                 },
             });
 
